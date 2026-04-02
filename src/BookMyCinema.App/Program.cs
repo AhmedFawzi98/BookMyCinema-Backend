@@ -5,7 +5,7 @@ using BookMyCinema.Presentation.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddWebApi()
+    .AddWeb()
     .AddPresentation()
     .AddApplication()
     .AddPersistance()
