@@ -1,0 +1,78 @@
+root = true
+
+[*]
+# --- white space ---
+indent_style = space
+indent_size = 4
+end_of_line = crlf
+charset = utf-8
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+# --- code style: namespaces, using statements, braces, constructors, methods, expressions ---
+dotnet_sort_system_directives_first = true # sort usings (put system usings first)
+dotnet_separate_import_directive_groups = false # no blank lines between usings
+csharp_using_directive_placement = outside_namespace
+csharp_prefer_simple_using_statement = true 
+csharp_prefer_braces = true:error
+csharp_new_line_before_open_brace = all #vertical braces style 
+csharp_style_namespace_declarations = file_scoped:error
+csharp_style_prefer_top_level_statements = true:suggestion
+csharp_style_prefer_primary_constructors = true:suggestion
+dotnet_style_prefer_auto_properties = true:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = true:error
+
+
+# --- modifiers enforcement ---
+dotnet_style_require_accessibility_modifiers = always:error #always require explicet accessibilty modifiers 
+
+
+# --- naming: define styles and cases ---
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+dotnet_naming_style.camel_case_with_underscore_prefix.capitalization = camel_case
+dotnet_naming_style.camel_case_with_underscore_prefix.required_prefix = _
+dotnet_naming_style.prefix_i.capitalization = pascal_case
+dotnet_naming_style.prefix_i.required_prefix = I
+
+# --- naming: interfaces  ---
+dotnet_naming_rule.interfaces_should_start_with_i.symbols = interfaces
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_rule.interfaces_should_start_with_i.style = prefix_i
+dotnet_naming_rule.interfaces_should_start_with_i.severity = error
+
+# --- naming: types  ---
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_symbols.types.applicable_kinds = class, record, struct, interface, enum
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.types_should_be_pascal_case.severity = error
+
+# --- naming: non field members (methods, properties, events) ---
+dotnet_naming_symbols.non_field_members.applicable_kinds = property, method, event
+dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members 
+dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = error
+
+# --- naming: private field members (backing fields, fields) ---
+dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_rule.private_fields_should_be_camel_case.style = camel_case_with_underscore_prefix
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private #apply these rules only if field is private
+dotnet_naming_rule.private_fields_should_be_camel_case.severity = error
+
+# --- analyzer severity examples ---
+dotnet_diagnostic.CA2000.severity = error #dispose objects
+dotnet_diagnostic.CA1822.severity = suggestion #Mark members that should be static as static!
+dotnet_diagnostic.CS8618.severity = error  #if a null accepting type is not marked as nullable it must be initalized 
+dotnet_diagnostic.CS8602.severity = error #enfore null check for nullable types
+
+
+# Xml files
+[*.xml]
+indent_size = 2
+
+[*.sh]
+end_of_line = lf
+
+
+
