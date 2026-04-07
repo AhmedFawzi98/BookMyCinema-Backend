@@ -4,10 +4,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BookMyCinema.Api\BookMyCinema.Api.csproj" />
     <ProjectReference Include="..\BookMyCinema.Application\BookMyCinema.Application.csproj" />
     <ProjectReference Include="..\BookMyCinema.Infrastructure\BookMyCinema.Infrastructure.csproj" />
     <ProjectReference Include="..\BookMyCinema.Persistance\BookMyCinema.Persistance.csproj" />
-    <ProjectReference Include="..\BookMyCinema.Presentation\BookMyCinema.Presentation.csproj" />
   </ItemGroup>
 
 </Project>
