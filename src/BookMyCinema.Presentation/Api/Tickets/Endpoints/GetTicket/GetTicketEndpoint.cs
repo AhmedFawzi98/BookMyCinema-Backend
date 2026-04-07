@@ -1,3 +1,6 @@
+using BookMyCinema.Application.Common.Results;
+using BookMyCinema.Domain.User;
+using BookMyCinema.Presentation.Common.Results;
 using BookMyCinema.Presentation.Endpoints.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -18,12 +21,10 @@ internal class GetTicketEndpoint : IEndpoint
 
     public async Task<IResult> GetTicketHandler()
     {
-        var ticketDummy = new GetTicketResponse
-        {
-            Id = 1,
-            Name = "Test",
-        };
+        Result<string> result = UserErrors.EmailTaken;
+        Console.WriteLine($"value: {result.Value}"); //null
 
-        return Results.Ok(ticketDummy);
+        return result.Match(
+            value => Results.Ok(value)); // won't hit
     }
 }

@@ -3,7 +3,7 @@ using BookMyCinema.Presentation.Endpoints.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace BookMyCinema.Presentation.Extensions;
+namespace BookMyCinema.Presentation.Api.Extensions;
 internal static class EndpointsExtensions
 {
     public static IServiceCollection AddEndpoints(this IServiceCollection services)

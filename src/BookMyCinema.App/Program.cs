@@ -1,6 +1,8 @@
-using BookMyCinema.App.Extensions;
+using BookMyCinema.App;
+using BookMyCinema.Application;
 using BookMyCinema.Infrastructure.Extensions;
-using BookMyCinema.Presentation.Extensions;
+using BookMyCinema.Persistance;
+using BookMyCinema.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 

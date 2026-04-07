@@ -8,11 +8,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Features\Tickets\DTOs\" />
     <Folder Include="Features\Tickets\Services\" />
     <Folder Include="Features\Tickets\Validators\" />
-    <Folder Include="Shared\" />
   </ItemGroup>
 
   <ItemGroup>

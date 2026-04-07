@@ -4,10 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
-    <Folder Include="Enums\" />
-    <Folder Include="Exceptions\" />
-    <Folder Include="Repositories\" />
+    <Folder Include="Errors\" />
   </ItemGroup>
 
 </Project>

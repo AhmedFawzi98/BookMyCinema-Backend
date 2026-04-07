@@ -1,8 +1,8 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace BookMyCinema.Infrastructure.Extensions;
+namespace BookMyCinema.Application;
 
 public static class ServiceCollectionExtensions
 {

@@ -1,12 +1,13 @@
 using BookMyCinema.Presentation.Endpoints;
 using BookMyCinema.Presentation.Endpoints.Abstractions;
 
-namespace BookMyCinema.App.Extensions;
+namespace BookMyCinema.App;
 
 public static class WebApplicationExtensions
 {
     public static WebApplication ConfigureWebApplication(this WebApplication app)
     {
+        app.UseExceptionHandler(_ => { });
         app.MapOpenApi();
         app.UseHttpsRedirection();
 
@@ -17,7 +18,8 @@ public static class WebApplicationExtensions
 
     private static WebApplication MapEndpoints(this WebApplication app)
     {
-        var baseGroupBuilder = app.MapGroup(ApiRoutes.ApiBase);
+        var baseGroupBuilder = app.MapGroup(ApiRoutes.ApiBase)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
 
