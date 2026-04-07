@@ -10,7 +10,6 @@
   <ItemGroup>
     <Folder Include="Features\Tickets\DTOs\" />
     <Folder Include="Features\Tickets\Services\" />
-    <Folder Include="Features\Tickets\Validators\" />
   </ItemGroup>
 
   <ItemGroup>
