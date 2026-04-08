@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing;
 
-namespace BookMyCinema.Presentation.Endpoints.Abstractions;
+namespace BookMyCinema.Api.Api.Abstractions;
 
-public interface IEndpoint
+internal interface IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app);
 }

@@ -1,12 +1,12 @@
 using System.Reflection;
-using BookMyCinema.Presentation.Endpoints.Abstractions;
+using BookMyCinema.Api.Api.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace BookMyCinema.Presentation.Api.Extensions;
+namespace BookMyCinema.Api.Api.Extensions;
 internal static class EndpointsExtensions
 {
-    public static IServiceCollection AddEndpoints(this IServiceCollection services)
+    internal static IServiceCollection AddEndpoints(this IServiceCollection services)
     {
         services.AddEndpoints(Assembly.GetExecutingAssembly());
         return services;

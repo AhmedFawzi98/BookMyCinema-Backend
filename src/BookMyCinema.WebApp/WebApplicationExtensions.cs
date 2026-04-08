@@ -1,5 +1,5 @@
-using BookMyCinema.Presentation.Endpoints;
-using BookMyCinema.Presentation.Endpoints.Abstractions;
+using BookMyCinema.Api.Api;
+using BookMyCinema.Api.Api.Abstractions;
 
 namespace BookMyCinema.App;
 

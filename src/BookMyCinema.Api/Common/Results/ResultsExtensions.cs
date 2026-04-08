@@ -2,7 +2,7 @@ using BookMyCinema.Application.Common.Results;
 using BookMyCinema.Domain.Common.Errors;
 using Microsoft.AspNetCore.Http;
 
-namespace BookMyCinema.Presentation.Common.Results;
+namespace BookMyCinema.Api.Common.Results;
 internal static class ResultExtensions
 {
     public static IResult Match<T>(

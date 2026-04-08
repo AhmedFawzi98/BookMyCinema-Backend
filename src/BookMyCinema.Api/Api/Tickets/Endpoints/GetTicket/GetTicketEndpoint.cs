@@ -1,12 +1,12 @@
+using BookMyCinema.Api.Api.Abstractions;
+using BookMyCinema.Api.Common.Results;
 using BookMyCinema.Application.Common.Results;
 using BookMyCinema.Domain.User;
-using BookMyCinema.Presentation.Common.Results;
-using BookMyCinema.Presentation.Endpoints.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace BookMyCinema.Presentation.Api.Tickets.Endpoints.GetTicket;
+namespace BookMyCinema.Api.Api.Tickets.Endpoints.GetTicket;
 internal class GetTicketEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)

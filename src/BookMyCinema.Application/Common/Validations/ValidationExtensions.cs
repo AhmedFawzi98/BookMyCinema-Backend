@@ -4,7 +4,7 @@ using FluentValidation.Results;
 namespace BookMyCinema.Application.Common.Validations;
 internal static class ValidationExtensions
 {
-    public static List<Error> ToErrors(this ValidationResult result)
+    internal static List<Error> ToErrors(this ValidationResult result)
     {
         return result.Errors
             .Select(f => new Error(

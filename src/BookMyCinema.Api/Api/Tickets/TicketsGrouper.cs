@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
-namespace BookMyCinema.Presentation.Api.Tickets;
+namespace BookMyCinema.Api.Api.Tickets;
 internal static class TicketsGrouper
 {
-    public static RouteGroupBuilder Get(IEndpointRouteBuilder endPointRouteBuilder)
+    internal static RouteGroupBuilder Get(IEndpointRouteBuilder endPointRouteBuilder)
     {
         return endPointRouteBuilder.MapGroup(TicketsRoutes.Base);
     }

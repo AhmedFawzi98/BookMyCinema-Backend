@@ -1,4 +1,4 @@
-namespace BookMyCinema.Presentation.Api.Tickets.Endpoints.GetTicket;
+namespace BookMyCinema.Api.Api.Tickets.Endpoints.GetTicket;
 internal static class GetTicketsDocumentation
 {
     public const string Tag = "GetTicket";

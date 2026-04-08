@@ -1,8 +1,8 @@
-using BookMyCinema.Presentation.Api.Extensions;
-using BookMyCinema.Presentation.Middlewares;
+using BookMyCinema.Api.Api.Extensions;
+using BookMyCinema.Api.Middlewares;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BookMyCinema.Presentation;
+namespace BookMyCinema.Api;
 
 public static class IServiceCollectionExtensions
 {

@@ -1,8 +1,9 @@
+using BookMyCinema.Application.Common.Abstractions;
 using BookMyCinema.Domain.Common.Errors;
 
 namespace BookMyCinema.Application.Common.Results;
 
-public class Result<T>
+public class Result<T> : IResult
 {
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
@@ -41,7 +42,7 @@ public class Result<T>
     public static implicit operator Result<T>(Error error) => Failure(error);
 }
 
-public class Result
+public class Result : IResult
 {
     public bool IsSuccess { get; }
 

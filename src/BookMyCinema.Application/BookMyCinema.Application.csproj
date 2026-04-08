@@ -8,7 +8,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Tickets\DTOs\" />
     <Folder Include="Features\Tickets\Services\" />
   </ItemGroup>
 
