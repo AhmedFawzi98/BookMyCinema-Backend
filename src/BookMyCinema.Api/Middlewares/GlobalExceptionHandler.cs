@@ -5,14 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace BookMyCinema.Api.Middlewares;
-internal class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> _logger) : IExceptionHandler
+internal class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
     {
         var response = context.Response;
         response.ContentType = "application/problem+json";
 
-        _logger.LogError(exception, "Unhandled exception occurred");
+        logger.LogError(exception, "Unhandled exception occurred");
 
         var problemDetails = new ProblemDetails
         {

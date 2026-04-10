@@ -13,6 +13,7 @@ public static class WebApplicationExtensions
 
         app.MapEndpoints();
 
+
         return app;
     }
 
