@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace BookMyCinema.Api.Api.Extensions;
 internal static class EndpointsExtensions
 {
-    internal static IServiceCollection AddEndpoints(this IServiceCollection services)
+    public static IServiceCollection AddEndpoints(this IServiceCollection services)
     {
         services.AddEndpoints(Assembly.GetExecutingAssembly());
         return services;

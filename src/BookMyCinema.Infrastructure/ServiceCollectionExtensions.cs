@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace BookMyCinema.Infrastructure.Extensions;
+namespace BookMyCinema.Infrastructure;
 
 public static class ServiceCollectionExtensions
 {

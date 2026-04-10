@@ -53,7 +53,7 @@ public class ApplicationTests : BaseTest
 
     //Visibility Tests
     [Fact]
-    public void All_Types_Other_Than_Dtos_Or_Result_ShouldBe_Internal()
+    public void All_Types_Other_Than_Abstractions_Or_Wiring_Utility_ShouldBe_Internal()
     {
         Types()
            .That()

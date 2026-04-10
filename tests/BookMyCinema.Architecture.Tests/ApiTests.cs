@@ -1,4 +1,5 @@
 using ArchUnitNET.xUnitV3;
+using BookMyCinema.Api;
 using BookMyCinema.Api.Api;
 using BookMyCinema.Api.Api.Abstractions;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
@@ -65,13 +66,19 @@ public class ApiTests : BaseTest
 
     //Visibility Tests
     [Fact]
-    public void All_Types_Other_Than_ApiRoutes_ShouldBe_Internal()
+    public void All_Types_Other_Than_Abstractions_Or_WiringUtility_ShouldBe_Internal()
     {
         Types()
             .That()
             .ResideInAssembly(ApiAssembly)
             .And()
             .AreNot(typeof(ApiRoutes))
+            .And()
+            .AreNot(typeof(IEndpoint))
+            .And()
+            .AreNot(typeof(ApiAssemblyMarker))
+            .And()
+            .AreNot(typeof(ServiceCollectionExtensions))
             .Should()
             .BeInternal()
             .Check(Architecture);
