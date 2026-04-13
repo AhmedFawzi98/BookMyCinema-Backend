@@ -32,6 +32,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMyCinema.Api", "src\Boo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMyCinema.WebApp", "src\BookMyCinema.WebApp\BookMyCinema.WebApp.csproj", "{42CB7CF1-7961-29C6-9298-4CDFB9B4C9AE}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SqlScripts", "SqlScripts", "{C8CB8834-C2BF-4675-A821-E4A2586A9EC8}"
+	ProjectSection(SolutionItems) = preProject
+		SqlScripts\Logging Tables Indexes.sql = SqlScripts\Logging Tables Indexes.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

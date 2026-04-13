@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace BookMyCinema.Api.Api.Extensions;
-internal static class EndpointsExtensions
+internal static class EndpointsRegisterationExtensions
 {
     public static IServiceCollection AddEndpoints(this IServiceCollection services)
     {

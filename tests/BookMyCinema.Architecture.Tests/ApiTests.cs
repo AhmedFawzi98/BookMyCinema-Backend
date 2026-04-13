@@ -2,6 +2,8 @@ using ArchUnitNET.xUnitV3;
 using BookMyCinema.Api;
 using BookMyCinema.Api.Api;
 using BookMyCinema.Api.Api.Abstractions;
+using BookMyCinema.Api.Common.Logging;
+using Microsoft.AspNetCore.Http;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
 namespace BookMyCinema.Architecture.Tests;
@@ -66,7 +68,7 @@ public class ApiTests : BaseTest
 
     //Visibility Tests
     [Fact]
-    public void All_Types_Other_Than_Abstractions_Or_WiringUtility_ShouldBe_Internal()
+    public void All_Types_Other_Than_Abstractions_Or_Middlewares_Or_WiringUtility_ShouldBe_Internal()
     {
         Types()
             .That()
@@ -79,6 +81,14 @@ public class ApiTests : BaseTest
             .AreNot(typeof(ApiAssemblyMarker))
             .And()
             .AreNot(typeof(ServiceCollectionExtensions))
+            .And()
+            .AreNot(typeof(HttpLoggingConstants))
+            .And()
+            .AreNot(typeof(HttpLoggingAttribute))
+            .And()
+            .AreNot(typeof(HttpLoggingOptions))
+            .And()
+            .DoNotImplementInterface(typeof(IMiddleware))
             .Should()
             .BeInternal()
             .Check(Architecture);

@@ -1,5 +1,6 @@
 using BookMyCinema.Api.Api.Extensions;
-using BookMyCinema.Api.Middlewares;
+using BookMyCinema.Api.Common.Errors;
+using BookMyCinema.Api.Common.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BookMyCinema.Api;
@@ -13,6 +14,8 @@ public static class ServiceCollectionExtensions
         services.AddEndpoints();
 
         services.AddOpenApi();
+
+        services.AddScoped<HttpRequestResponseBodyLoggingHelperMiddleware>();
 
         return services;
     }
