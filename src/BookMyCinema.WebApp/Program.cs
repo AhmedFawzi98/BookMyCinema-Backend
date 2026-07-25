@@ -12,7 +12,7 @@ builder.Services
     .AddWeb()
     .AddPresentation()
     .AddApplication()
-    .AddPersistance()
+    .AddPersistence(builder.Configuration)
     .AddInfrastructure();
 
 builder.Host.AddSerilog();
