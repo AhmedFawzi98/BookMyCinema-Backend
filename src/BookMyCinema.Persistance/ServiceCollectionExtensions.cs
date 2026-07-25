@@ -1,4 +1,5 @@
 using BookMyCinema.Persistance.Constants;
+using BookMyCinema.Persistance.Interceptors;
 using BookMyCinema.Persistance.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -28,25 +29,38 @@ public static class ServiceCollectionExtensions
 
     private static void AddEfCore(IServiceCollection services, IConfiguration configuration)
     {
+        AddInterceptors(services);
+        AddDbContext(services, configuration);
+    }
+
+    private static void AddInterceptors(IServiceCollection services)
+    {
+        services.AddScoped<AuditableEntitiesInterceptor>();
+    }
+
+    private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
+    {
         var connectionString =
-          configuration.GetConnectionString(DatabaseConstants.DefaultConnection)
-          ?? throw new InvalidOperationException(
-              $"Connection string '{DatabaseConstants.DefaultConnection}' was not found.");
+         configuration.GetConnectionString(DatabaseConstants.DefaultConnection)
+         ?? throw new InvalidOperationException(
+             $"Connection string '{DatabaseConstants.DefaultConnection}' was not found.");
 
-        services.AddDbContext<ApplicationDbContext>(options =>
+        var efOptions = configuration
+              .GetRequiredSection(EntityFrameworkOptions.SectionName)
+              .Get<EntityFrameworkOptions>()
+                   ?? throw new InvalidOperationException(
+                       $"Configuration section '{EntityFrameworkOptions.SectionName}' is missing.");
+
+        services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
-            var efOptions = configuration
-               .GetRequiredSection(EntityFrameworkOptions.SectionName)
-               .Get<EntityFrameworkOptions>()
-                    ?? throw new InvalidOperationException(
-                        $"Configuration section '{EntityFrameworkOptions.SectionName}' is missing.");
-
+           
             options.UseSqlServer(connectionString, sqlOptions =>
             {
                 sqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
 
                 //todo: handle retry logic for transient failures
-            });
+
+            }).AddInterceptors(sp.GetRequiredService<AuditableEntitiesInterceptor>());
 
             if (efOptions.EnableSensitiveDataLogging)
             {
@@ -59,4 +73,5 @@ public static class ServiceCollectionExtensions
             }
         });
     }
+
 }

@@ -25,7 +25,7 @@ dotnet_style_prefer_simplified_boolean_expressions = true:error
 
 
 # --- modifiers enforcement ---
-dotnet_style_require_accessibility_modifiers = always:error #always require explicet accessibilty modifiers 
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
 
 
 # --- naming: define styles and cases ---

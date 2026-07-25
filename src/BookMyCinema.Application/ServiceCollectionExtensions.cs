@@ -1,3 +1,4 @@
+using BookMyCinema.Application.User;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         AddFluentValidatation(services);
+        AddApplicationServices(services);
 
         return services;
     }
@@ -18,4 +20,10 @@ public static class ServiceCollectionExtensions
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         ValidatorOptions.Global.DefaultClassLevelCascadeMode = CascadeMode.Continue;
     }
+
+    private static void AddApplicationServices(IServiceCollection services)
+    {
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+    }
+
 }
