@@ -1,0 +1,622 @@
+Project BookMyCinema {
+  database_type: 'SQLServer'
+  Note: '''
+  Initial logical schema source of truth for BookMyCinema.
+  Public UUIDv7 values are stored as binary(16).
+  All audit timestamps use UTC datetime2.
+  All delete behaviors are NO ACTION unless explicitly revised later.
+  SQL Server filtered indexes are represented with DBML index notes where DBML has no native WHERE clause.
+  '''
+}
+
+Table Countries {
+  Id smallint [pk, increment]
+  IsoCode char(2) [not null]
+  Name nvarchar(100) [not null]
+
+  indexes {
+    IsoCode [unique, name: 'UX_Countries_IsoCode']
+  }
+
+  Note: '''
+  Uses ISO 3166-1 alpha-2 country codes.
+  Country is the only normalized geographic level in the initial schema.
+  '''
+}
+
+Table TimeZones {
+  Id int [pk, increment]
+  IanaId varchar(100) [not null]
+  DisplayName nvarchar(200) [not null]
+
+  indexes {
+    IanaId [unique, name: 'UX_TimeZones_IanaId']
+  }
+}
+
+Table ApplicationUsers {
+  Id int [pk, increment]
+  PublicId binary(16) [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_ApplicationUsers_PublicId']
+  }
+
+  Note: '''
+  Minimal user placeholder. Authentication and authorization fields are intentionally deferred.
+  Inactive users remain queryable and linked to historical data. Operational flows must reject inactive users explicitly.
+  '''
+}
+
+Table Cinemas {
+  Id int [pk, increment]
+  PublicId binary(16) [not null]
+  BrandName nvarchar(200) [not null]
+  Slug varchar(150) [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_Cinemas_PublicId']
+    Slug [unique, name: 'UX_Cinemas_Slug']
+  }
+}
+
+Table CinemaBranches {
+  Id int [pk, increment]
+  CinemaId int [not null]
+  PublicId binary(16) [not null]
+  Name nvarchar(200) [not null]
+  Slug varchar(150) [not null]
+  CurrencyCode char(3) [not null]
+  TimeZoneId int [not null]
+  CountryId smallint [not null]
+  AdministrativeArea nvarchar(150)
+  Locality nvarchar(150) [not null]
+  AddressLine1 nvarchar(250) [not null]
+  AddressLine2 nvarchar(250)
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_CinemaBranches_PublicId']
+    (CinemaId, Id) [unique, name: 'AK_CinemaBranches_CinemaId_Id']
+    (CinemaId, Slug) [unique, name: 'UX_CinemaBranches_CinemaId_Slug']
+  }
+
+  Note: '''
+  Country is normalized through CountryId.
+  AdministrativeArea is free text for state, governorate, province, region, or equivalent.
+  Locality is free text for city, town, district, municipality, area, or equivalent.
+  AddressLine1 and AddressLine2 hold the detailed branch address.
+  Locality and AdministrativeArea are intentionally descriptive rather than authoritative geographic identifiers.
+  Text filtering is acceptable at the expected branch scale; no dedicated location-text index is defined initially.
+  Latitude, longitude, and postal code are intentionally deferred until a concrete feature requires them.
+  '''
+}
+
+Table CinemaEmployees {
+  CinemaId int [not null]
+  UserId int [not null]
+  ScopeType tinyint [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    (CinemaId, UserId) [pk, name: 'PK_CinemaEmployees']
+    UserId [name: 'IX_CinemaEmployees_UserId']
+  }
+}
+
+Table CinemaEmployeeBranchAssignments {
+  CinemaId int [not null]
+  UserId int [not null]
+  CinemaBranchId int [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    (CinemaId, UserId, CinemaBranchId) [pk, name: 'PK_CinemaEmployeeBranchAssignments']
+    UserId [name: 'IX_CinemaEmployeeBranchAssignments_UserId']
+  }
+}
+
+Table CinemaSeatTypes {
+  Id int [pk, increment]
+  CinemaId int [not null]
+  Name nvarchar(100) [not null]
+  DisplayOrder smallint [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    (CinemaId, Name) [unique, name: 'UX_CinemaSeatTypes_CinemaId_Name']
+  }
+}
+
+Table Halls {
+  Id int [pk, increment]
+  CinemaId int [not null]
+  CinemaBranchId int [not null]
+  PublicId binary(16) [not null]
+  Name nvarchar(150) [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_Halls_PublicId']
+    (CinemaId, CinemaBranchId, Id) [unique, name: 'AK_Halls_CinemaId_CinemaBranchId_Id']
+    (CinemaId, CinemaBranchId, Name) [unique, name: 'UX_Halls_CinemaId_CinemaBranchId_Name']
+  }
+}
+
+Table Seats {
+  Id int [pk, increment]
+  HallId int [not null]
+  CinemaSeatTypeId int [not null]
+  RowNumber smallint [not null]
+  SeatNumber smallint [not null]
+  SeatLabel nvarchar(20) [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    (HallId, Id) [unique, name: 'AK_Seats_HallId_Id']
+    (HallId, RowNumber, SeatNumber) [unique, name: 'UX_Seats_HallId_RowNumber_SeatNumber']
+  }
+
+  Note: '''
+  Cinema ownership is intentionally not duplicated on Seat.
+  Seat-type ownership is validated in application logic by resolving the hall's cinema.
+  SeatLabel is persisted and generated centrally during hall-layout configuration.
+  '''
+}
+
+Table HallLayoutCells {
+  HallId int [not null]
+  RowNumber smallint [not null]
+  ColumnNumber smallint [not null]
+  SeatId int
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    (HallId, RowNumber, ColumnNumber) [pk, name: 'PK_HallLayoutCells']
+    (HallId, SeatId) [unique, name: 'UX_HallLayoutCells_HallId_SeatId', note: 'Filtered WHERE SeatId IS NOT NULL']
+  }
+}
+
+Table Movies {
+  Id int [pk, increment]
+  PublicId binary(16) [not null]
+  TmdbId int
+  Title nvarchar(300) [not null]
+  OriginalTitle nvarchar(300)
+  OriginalLanguageCode varchar(10)
+  Overview nvarchar(max)
+  RuntimeMinutes smallint [not null]
+  IsRuntimeEstimated bit [not null]
+  ReleaseDate date
+  PosterPath nvarchar(500)
+  TrailerSite varchar(30)
+  TrailerKey nvarchar(200)
+  TmdbVoteAverage decimal(4,2)
+  TmdbVoteCount int
+  IsAdult bit [not null]
+  TmdbLastSyncedAtUtc datetime2
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_Movies_PublicId']
+    TmdbId [unique, name: 'UX_Movies_TmdbId', note: 'Filtered WHERE TmdbId IS NOT NULL']
+  }
+}
+
+Table Genres {
+  Id int [pk, increment]
+  TmdbId int
+  Name nvarchar(100) [not null]
+  TmdbLastSyncedAtUtc datetime2
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    TmdbId [unique, name: 'UX_Genres_TmdbId', note: 'Filtered WHERE TmdbId IS NOT NULL']
+  }
+}
+
+Table MovieGenres {
+  MovieId int [not null]
+  GenreId int [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    (MovieId, GenreId) [pk, name: 'PK_MovieGenres']
+    GenreId [name: 'IX_MovieGenres_GenreId']
+  }
+}
+
+Table Persons {
+  Id int [pk, increment]
+  PublicId binary(16) [not null]
+  TmdbId int
+  Name nvarchar(300) [not null]
+  OriginalName nvarchar(300)
+  ProfilePath nvarchar(500)
+  TmdbLastSyncedAtUtc datetime2
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_Persons_PublicId']
+    TmdbId [unique, name: 'UX_Persons_TmdbId', note: 'Filtered WHERE TmdbId IS NOT NULL']
+  }
+}
+
+Table MovieCredits {
+  Id int [pk, increment]
+  MovieId int [not null]
+  PersonId int [not null]
+  TmdbCreditId varchar(100)
+  CreditCategory tinyint [not null]
+  CharacterName nvarchar(300)
+  CastOrder int
+  Department nvarchar(100)
+  Job nvarchar(100)
+  TmdbLastSyncedAtUtc datetime2
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    TmdbCreditId [unique, name: 'UX_MovieCredits_TmdbCreditId', note: 'Filtered WHERE TmdbCreditId IS NOT NULL']
+    MovieId [name: 'IX_MovieCredits_MovieId']
+    PersonId [name: 'IX_MovieCredits_PersonId']
+  }
+
+  checks {
+    `(
+      (CreditCategory = 1 AND CastOrder IS NOT NULL AND Department IS NULL AND Job IS NULL)
+      OR
+      (CreditCategory = 2 AND CharacterName IS NULL AND CastOrder IS NULL AND Department IS NOT NULL AND Job IS NOT NULL)
+    )` [name: 'CK_MovieCredits_CategoryColumnConsistency']
+  }
+}
+
+Table MoviePosterMirrors {
+  MovieId int [pk]
+  StorageId binary(16) [not null]
+  OriginalFileName nvarchar(255) [not null]
+  FileExtension varchar(10) [not null]
+  StoredContentType varchar(100) [not null]
+  SizeBytes bigint [not null]
+  Width int [not null]
+  Height int [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    StorageId [unique, name: 'UX_MoviePosterMirrors_StorageId']
+  }
+}
+
+Table CinemaBranchMovies {
+  Id int [pk, increment]
+  CinemaId int [not null]
+  CinemaBranchId int [not null]
+  MovieId int [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  IsActive bit [not null, default: 1]
+  ActivationChangedAtUtc datetime2
+  ActivationChangedByUserId int
+
+  indexes {
+    (CinemaId, CinemaBranchId, Id) [unique, name: 'AK_CinemaBranchMovies_CinemaId_CinemaBranchId_Id']
+    (CinemaBranchId, MovieId) [unique, name: 'UX_CinemaBranchMovies_CinemaBranchId_MovieId']
+  }
+}
+
+Table ShowtimeSchedules {
+  Id int [pk, increment]
+  PublicId binary(16) [not null]
+  CinemaId int [not null]
+  CinemaBranchId int [not null]
+  HallId int [not null]
+  CinemaBranchMovieId int [not null]
+  LocalEffectiveFrom date [not null]
+  LocalEffectiveTo date
+  LocalStartTime time [not null]
+  LocalEndTime time [not null]
+  LocalGeneratedThroughDate date
+  Status tinyint [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_ShowtimeSchedules_PublicId']
+    (CinemaId, CinemaBranchId, Id) [unique, name: 'AK_ShowtimeSchedules_CinemaId_CinemaBranchId_Id']
+    (CinemaId, CinemaBranchId, HallId) [name: 'IX_ShowtimeSchedules_CinemaId_CinemaBranchId_HallId']
+    (CinemaId, CinemaBranchId, CinemaBranchMovieId) [name: 'IX_ShowtimeSchedules_CinemaId_CinemaBranchId_CinemaBranchMovieId']
+  }
+}
+
+Table ShowtimeScheduleSeatTypePrices {
+  ShowtimeScheduleId int [not null]
+  CinemaSeatTypeId int [not null]
+  Amount decimal(18,2) [not null]
+  CurrencyCode char(3) [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    (ShowtimeScheduleId, CinemaSeatTypeId) [pk, name: 'PK_ShowtimeScheduleSeatTypePrices']
+  }
+}
+
+Table Showtimes {
+  Id int [pk, increment]
+  PublicId binary(16) [not null]
+  ShowtimeScheduleId int [not null]
+  CinemaId int [not null]
+  CinemaBranchId int [not null]
+  LocalStartsAt datetimeoffset [not null]
+  LocalEndsAt datetimeoffset [not null]
+  LocalOccurrenceDate date [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    PublicId [unique, name: 'UX_Showtimes_PublicId']
+    (CinemaId, CinemaBranchId, Id) [unique, name: 'AK_Showtimes_CinemaId_CinemaBranchId_Id']
+    (ShowtimeScheduleId, LocalOccurrenceDate) [unique, name: 'UX_Showtimes_ShowtimeScheduleId_LocalOccurrenceDate']
+  }
+}
+
+Table ShowtimeSeats {
+  ShowtimeId int [not null]
+  SeatId int [not null]
+  CinemaSeatTypeId int [not null]
+  SeatLabel nvarchar(20) [not null]
+  Status tinyint [not null]
+  BookingReference binary(16)
+  HoldExpiresAtUtc datetime2
+
+  indexes {
+    (ShowtimeId, SeatId) [pk, name: 'PK_ShowtimeSeats']
+    HoldExpiresAtUtc [name: 'IX_ShowtimeSeats_HoldExpiresAtUtc_Held', note: 'Filtered WHERE Status = Held']
+  }
+
+  checks {
+    `(
+      (Status = 1 AND BookingReference IS NULL AND HoldExpiresAtUtc IS NULL)
+      OR
+      (Status = 2 AND BookingReference IS NOT NULL AND HoldExpiresAtUtc IS NOT NULL)
+      OR
+      (Status IN (3,4) AND BookingReference IS NOT NULL AND HoldExpiresAtUtc IS NULL)
+    )` [name: 'CK_ShowtimeSeats_StatusOwnershipConsistency']
+  }
+}
+
+Table Bookings {
+  Id bigint [pk, increment]
+  BookingReference binary(16) [not null]
+  UserId int
+  ShowtimeId int [not null]
+  CinemaId int [not null]
+  CinemaBranchId int [not null]
+  CustomerName nvarchar(200) [not null]
+  CustomerEmail nvarchar(320) [not null]
+  CustomerPhone nvarchar(50) [not null]
+  SeatsCount smallint [not null]
+  CurrencyCode char(3) [not null]
+  TotalPriceAmount decimal(18,2) [not null]
+  Status tinyint [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    BookingReference [unique, name: 'UX_Bookings_BookingReference']
+    (Id, ShowtimeId) [unique, name: 'AK_Bookings_Id_ShowtimeId']
+    (CinemaId, CinemaBranchId, ShowtimeId) [name: 'IX_Bookings_CinemaId_CinemaBranchId_ShowtimeId']
+    UserId [name: 'IX_Bookings_UserId', note: 'Filtered WHERE UserId IS NOT NULL']
+  }
+}
+
+Table BookingSeats {
+  Id bigint [pk, increment]
+  BookingId bigint [not null]
+  ShowtimeId int [not null]
+  SeatId int [not null]
+  PriceAmount decimal(18,2) [not null]
+  CurrencyCode char(3) [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    (BookingId, SeatId) [unique, name: 'UX_BookingSeats_BookingId_SeatId']
+    (ShowtimeId, SeatId) [unique, name: 'UX_BookingSeats_ShowtimeId_SeatId']
+  }
+}
+
+Table Payments {
+  Id bigint [pk, increment]
+  BookingId bigint [not null]
+  PaymentProvider tinyint [not null]
+  ProviderSessionReference varchar(255)
+  ProviderSessionExpiresAtUtc datetime2
+  Status tinyint [not null]
+  Amount decimal(18,2) [not null]
+  CurrencyCode char(3) [not null]
+  CompletedAtUtc datetime2
+  FailureCode varchar(100)
+  FailureMessage nvarchar(1000)
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    BookingId [unique, name: 'UX_Payments_BookingId']
+    (PaymentProvider, ProviderSessionReference) [unique, name: 'UX_Payments_Provider_SessionReference', note: 'Filtered WHERE ProviderSessionReference IS NOT NULL']
+  }
+}
+
+Table Tickets {
+  Id bigint [pk, increment]
+  BookingSeatId bigint [not null]
+  TicketReference binary(16) [not null]
+  Status tinyint [not null]
+  UsedAtUtc datetime2
+  CancelledAtUtc datetime2
+  ValidationToken varchar(500)
+  ValidationTokenHash varbinary(64)
+  EncryptedValidationToken varbinary(max)
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+
+  indexes {
+    BookingSeatId [unique, name: 'UX_Tickets_BookingSeatId']
+    TicketReference [unique, name: 'UX_Tickets_TicketReference']
+  }
+
+  checks {
+    `(
+      (Status = 1 AND UsedAtUtc IS NULL AND CancelledAtUtc IS NULL)
+      OR
+      (Status = 2 AND UsedAtUtc IS NOT NULL AND CancelledAtUtc IS NULL)
+      OR
+      (Status = 3 AND UsedAtUtc IS NULL AND CancelledAtUtc IS NOT NULL)
+    )` [name: 'CK_Tickets_StatusTimestampConsistency']
+  }
+}
+
+Table UserProfileImages {
+  UserId int [pk]
+  OriginalFileName nvarchar(255) [not null]
+  StorageId binary(16) [not null]
+  FileExtension varchar(10) [not null]
+  StoredContentType varchar(100) [not null]
+  SizeBytes bigint [not null]
+  Width int [not null]
+  Height int [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    StorageId [unique, name: 'UX_UserProfileImages_StorageId']
+  }
+}
+
+Table CinemaLogos {
+  CinemaId int [pk]
+  OriginalFileName nvarchar(255) [not null]
+  StorageId binary(16) [not null]
+  FileExtension varchar(10) [not null]
+  StoredContentType varchar(100) [not null]
+  SizeBytes bigint [not null]
+  Width int [not null]
+  Height int [not null]
+  CreatedAtUtc datetime2 [not null]
+  CreatedByUserId int
+  ModifiedAtUtc datetime2
+  ModifiedByUserId int
+
+  indexes {
+    StorageId [unique, name: 'UX_CinemaLogos_StorageId']
+  }
+}
+
+Ref: CinemaBranches.CinemaId > Cinemas.Id [delete: no action, update: no action]
+Ref: CinemaBranches.TimeZoneId > TimeZones.Id [delete: no action, update: no action]
+Ref: CinemaBranches.CountryId > Countries.Id [delete: no action, update: no action]
+Ref: CinemaEmployees.CinemaId > Cinemas.Id [delete: no action, update: no action]
+Ref: CinemaEmployees.UserId > ApplicationUsers.Id [delete: no action, update: no action]
+Ref: CinemaEmployeeBranchAssignments.(CinemaId, UserId) > CinemaEmployees.(CinemaId, UserId) [delete: no action, update: no action]
+Ref: CinemaEmployeeBranchAssignments.(CinemaId, CinemaBranchId) > CinemaBranches.(CinemaId, Id) [delete: no action, update: no action]
+Ref: CinemaSeatTypes.CinemaId > Cinemas.Id [delete: no action, update: no action]
+Ref: Halls.(CinemaId, CinemaBranchId) > CinemaBranches.(CinemaId, Id) [delete: no action, update: no action]
+Ref: Seats.HallId > Halls.Id [delete: no action, update: no action]
+Ref: Seats.CinemaSeatTypeId > CinemaSeatTypes.Id [delete: no action, update: no action]
+Ref: HallLayoutCells.HallId > Halls.Id [delete: no action, update: no action]
+Ref: HallLayoutCells.(HallId, SeatId) > Seats.(HallId, Id) [delete: no action, update: no action]
+Ref: MovieGenres.MovieId > Movies.Id [delete: no action, update: no action]
+Ref: MovieGenres.GenreId > Genres.Id [delete: no action, update: no action]
+Ref: MovieCredits.MovieId > Movies.Id [delete: no action, update: no action]
+Ref: MovieCredits.PersonId > Persons.Id [delete: no action, update: no action]
+Ref: MoviePosterMirrors.MovieId > Movies.Id [delete: no action, update: no action]
+Ref: CinemaBranchMovies.(CinemaId, CinemaBranchId) > CinemaBranches.(CinemaId, Id) [delete: no action, update: no action]
+Ref: CinemaBranchMovies.MovieId > Movies.Id [delete: no action, update: no action]
+Ref: ShowtimeSchedules.(CinemaId, CinemaBranchId, HallId) > Halls.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
+Ref: ShowtimeSchedules.(CinemaId, CinemaBranchId, CinemaBranchMovieId) > CinemaBranchMovies.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
+Ref: ShowtimeScheduleSeatTypePrices.ShowtimeScheduleId > ShowtimeSchedules.Id [delete: no action, update: no action]
+Ref: ShowtimeScheduleSeatTypePrices.CinemaSeatTypeId > CinemaSeatTypes.Id [delete: no action, update: no action]
+Ref: Showtimes.(CinemaId, CinemaBranchId, ShowtimeScheduleId) > ShowtimeSchedules.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
+Ref: ShowtimeSeats.ShowtimeId > Showtimes.Id [delete: no action, update: no action]
+Ref: ShowtimeSeats.SeatId > Seats.Id [delete: no action, update: no action]
+Ref: ShowtimeSeats.CinemaSeatTypeId > CinemaSeatTypes.Id [delete: no action, update: no action]
+Ref: Bookings.UserId > ApplicationUsers.Id [delete: no action, update: no action]
+Ref: Bookings.(CinemaId, CinemaBranchId, ShowtimeId) > Showtimes.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
+Ref: BookingSeats.(BookingId, ShowtimeId) > Bookings.(Id, ShowtimeId) [delete: no action, update: no action]
+Ref: BookingSeats.(ShowtimeId, SeatId) > ShowtimeSeats.(ShowtimeId, SeatId) [delete: no action, update: no action]
+Ref: Payments.BookingId > Bookings.Id [delete: no action, update: no action]
+Ref: Tickets.BookingSeatId > BookingSeats.Id [delete: no action, update: no action]
+Ref: UserProfileImages.UserId > ApplicationUsers.Id [delete: no action, update: no action]
+Ref: CinemaLogos.CinemaId > Cinemas.Id [delete: no action, update: no action]
