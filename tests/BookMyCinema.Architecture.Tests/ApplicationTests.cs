@@ -1,6 +1,7 @@
 using ArchUnitNET.xUnitV3;
 using BookMyCinema.Application;
 using BookMyCinema.Application.Common.Abstractions;
+using BookMyCinema.Domain.Common.Results;
 using FluentValidation;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ServiceCollectionExtensions = BookMyCinema.Application.ServiceCollectionExtensions;

@@ -1,6 +1,7 @@
-using BookMyCinema.Application.Common.Results;
 using BookMyCinema.Domain.Common.Errors;
+using BookMyCinema.Domain.Common.Results;
 using Microsoft.AspNetCore.Http;
+using IResult = Microsoft.AspNetCore.Http.IResult;
 namespace BookMyCinema.Api.Common.Results;
 internal static class ResultExtensions
 {

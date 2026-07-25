@@ -1,7 +1,6 @@
-using BookMyCinema.Application.Common.Abstractions;
 using BookMyCinema.Domain.Common.Errors;
 
-namespace BookMyCinema.Application.Common.Results;
+namespace BookMyCinema.Domain.Common.Results;
 
 public class Result<T> : IResult
 {
