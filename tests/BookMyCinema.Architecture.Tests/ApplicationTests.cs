@@ -1,7 +1,7 @@
+using System.Reflection;
 using ArchUnitNET.xUnitV3;
 using BookMyCinema.Application;
 using BookMyCinema.Application.Common.Abstractions;
-using BookMyCinema.Domain.Common.Results;
 using FluentValidation;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 using ServiceCollectionExtensions = BookMyCinema.Application.ServiceCollectionExtensions;
@@ -54,28 +54,36 @@ public class ApplicationTests : BaseTest
 
     //Visibility Tests
     [Fact]
-    public void All_Types_Other_Than_Abstractions_Or_Wiring_Utility_ShouldBe_Internal()
+    public void All_Classes_Other_Than_Abstractions_Or_Wiring_Utility_ShouldBe_Internal()
     {
-        Types()
-           .That()
-           .ResideInAssembly(ApplicationAssembly)
-           .And()
-           .AreNot(typeof(IDto))
-           .And()
-           .AreNot(typeof(IResult))
-           .And()
-           .DoNotImplementInterface(typeof(IDto))
-           .And()
-           .DoNotImplementInterface(typeof(IResult))
-           .And()
-           .AreNot(typeof(ApplicationAssemblyMarker))
-           .And()
-           .AreNot(typeof(ServiceCollectionExtensions))
-           .Should()
-           .BeInternal()
-           .Check(Architecture);
+        Classes()
+            .That()
+            .ResideInAssembly(ApplicationAssembly)
+            .And()
+            .DoNotHaveAnyAttributes(typeof(PubliclyVisibleAttribute))
+            .And()
+            .DoNotImplementInterface(typeof(IDto))
+            .And()
+            .AreNot(typeof(ApplicationAssemblyMarker))
+            .And()
+            .AreNot(typeof(ServiceCollectionExtensions))
+            .Should()
+            .BeInternal()
+            .Check(Architecture);
     }
 
+    [Fact]
+    public void All_Enums_Other_Than_Abstractions_Or_Wiring_Utility_ShouldBe_Internal()
+    {
+        var publicEnumsThatShouldntBePubliclyExposed = ApplicationAssembly.GetTypes()
+            .Where(t => t.IsEnum && t.IsPublic)
+            .Where(t => t.GetCustomAttribute<PubliclyVisibleAttribute>() is null)
+            .ToList();
+
+        Assert.True(
+            publicEnumsThatShouldntBePubliclyExposed.Count == 0,
+            $"Found public enums that shouldn't be exposed: {string.Join(", ", publicEnumsThatShouldntBePubliclyExposed.Select(t => t.Name))}");
+    }
     //Dependency Tests
     [Fact]
     public void Application_ShouldNot_Depend_On_ForbiddenNamespaces()

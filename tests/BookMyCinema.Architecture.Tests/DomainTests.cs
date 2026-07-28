@@ -22,10 +22,6 @@ public class DomainTests : BaseTest
 
     //Colocation Tests
 
-
-    //Visibility Tests
-
-
     //Dependency Test
     [Fact]
     public void Domain_ShouldNot_Depend_On_ForbiddenNamespaces()
