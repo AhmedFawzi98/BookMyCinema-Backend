@@ -6,7 +6,7 @@ using Serilog;
 using Serilog.Events;
 using HttpLoggingAttribute = BookMyCinema.Api.Common.Logging.HttpLoggingAttribute;
 using HttpLoggingOptions = BookMyCinema.Api.Common.Logging.HttpLoggingOptions;
-namespace BookMyCinema.App;
+namespace BookMyCinema.WebApp;
 
 public static class WebApplicationExtensions
 {
@@ -52,7 +52,7 @@ public static class WebApplicationExtensions
                     return LogEventLevel.Verbose;
                 }
 
-                httpContext.Items[HttpLoggingConstants.ElapsedMs] = elapsed;
+                httpContext.Items[HttpLogProperties.Diagnostics.ElapsedMs] = elapsed;
 
                 if (ex is not null)
                 {
@@ -77,39 +77,39 @@ public static class WebApplicationExtensions
                     return;
                 }
 
-                diagnosticContext.Set(HttpLoggingConstants.IsHttpLog, true);
+                diagnosticContext.Set(HttpLogProperties.IsHttpLog, true);
 
                 if (attr.LogsRequest)
                 {
-                    diagnosticContext.Set(HttpLoggingConstants.Method, httpContext.Request.Method);
-                    diagnosticContext.Set(HttpLoggingConstants.Path, httpContext.Request.Path);
-                    diagnosticContext.Set(HttpLoggingConstants.TraceId, Activity.Current?.TraceId.ToString());
+                    diagnosticContext.Set(HttpLogProperties.Request.Method, httpContext.Request.Method);
+                    diagnosticContext.Set(HttpLogProperties.Request.Path, httpContext.Request.Path);
+                    diagnosticContext.Set(HttpLogProperties.Diagnostics.TraceId, Activity.Current?.TraceId.ToString());
 
                     var userId = httpContext.User?.Identity?.Name;
                     if (!string.IsNullOrEmpty(userId))
                     {
-                        diagnosticContext.Set(HttpLoggingConstants.UserId, userId);
+                        diagnosticContext.Set(HttpLogProperties.Diagnostics.UserId, userId);
                     }
                 }
 
                 if (attr.LogsResponse)
                 {
-                    diagnosticContext.Set(HttpLoggingConstants.StatusCode, httpContext.Response.StatusCode);
+                    diagnosticContext.Set(HttpLogProperties.Response.StatusCode, httpContext.Response.StatusCode);
 
-                    if (httpContext.Items.TryGetValue(HttpLoggingConstants.ElapsedMs, out var elapsed))
+                    if (httpContext.Items.TryGetValue(HttpLogProperties.Diagnostics.ElapsedMs, out var elapsed))
                     {
-                        diagnosticContext.Set(HttpLoggingConstants.ElapsedMs, Convert.ToInt32(elapsed));
+                        diagnosticContext.Set(HttpLogProperties.Diagnostics.ElapsedMs, Convert.ToInt32(elapsed));
                     }
                 }
 
-                if (httpContext.Items.TryGetValue(HttpLoggingConstants.RequestBodyKey, out var reqBody))
+                if (attr.LogsRequestBody && httpContext.Items.TryGetValue(HttpLogProperties.Request.Body, out var reqBody))
                 {
-                    diagnosticContext.Set(HttpLoggingConstants.RequestBodyKey, reqBody?.ToString());
+                    diagnosticContext.Set(HttpLogProperties.Request.Body, reqBody?.ToString());
                 }
 
-                if (httpContext.Items.TryGetValue(HttpLoggingConstants.ResponseBodyKey, out var resBody))
+                if (attr.LogsResponseBody && httpContext.Items.TryGetValue(HttpLogProperties.Response.Body, out var resBody))
                 {
-                    diagnosticContext.Set(HttpLoggingConstants.ResponseBodyKey, resBody?.ToString());
+                    diagnosticContext.Set(HttpLogProperties.Response.Body, resBody?.ToString());
                 }
             };
         });

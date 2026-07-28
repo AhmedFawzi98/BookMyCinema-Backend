@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using IResult = Microsoft.AspNetCore.Http.IResult;
 
 namespace BookMyCinema.Api.Api.Tickets.Endpoints.GetTicket;
-internal class GetTicketEndpoint : IEndpoint
+public class GetTicketEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {

@@ -1,5 +1,8 @@
+using BookMyCinema.Application;
+
 namespace BookMyCinema.Api.Common.Logging;
 
+[PubliclyVisible]
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, Inherited = true)]
 public sealed class HttpLoggingAttribute : Attribute
 {

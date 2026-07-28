@@ -55,7 +55,7 @@ public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
         var body = await reader.ReadToEndAsync();
         request.Body.Position = 0;
 
-        context.Items[HttpLoggingConstants.RequestBodyKey] = body;
+        context.Items[HttpLogProperties.Request.Body] = body;
     }
 
     private async Task CaptureWithResponseBufferingAsync(
@@ -82,7 +82,7 @@ public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
             using var reader = new StreamReader(buffer, Encoding.UTF8, false, leaveOpen: true);
             var responseBody = await reader.ReadToEndAsync();
 
-            context.Items[HttpLoggingConstants.ResponseBodyKey] = responseBody;
+            context.Items[HttpLogProperties.Response.Body] = responseBody;
 
             // Copy buffered response back to original stream
             buffer.Position = 0;

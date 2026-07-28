@@ -41,9 +41,9 @@ public static class ServiceCollectionExtensions
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
     {
         var connectionString =
-         configuration.GetConnectionString(DatabaseConstants.DefaultConnection)
+         configuration.GetConnectionString(ConnectionStringNames.DefaultConnection)
          ?? throw new InvalidOperationException(
-             $"Connection string '{DatabaseConstants.DefaultConnection}' was not found.");
+             $"Connection string '{ConnectionStringNames.DefaultConnection}' was not found.");
 
         var efOptions = configuration
               .GetRequiredSection(EntityFrameworkOptions.SectionName)

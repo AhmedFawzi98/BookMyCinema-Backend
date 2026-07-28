@@ -1,7 +1,10 @@
+using BookMyCinema.Application;
+
 namespace BookMyCinema.Api.Common.Logging;
 
+[PubliclyVisible]
 [Flags]
-public enum HttpLoggingOptions
+public enum HttpLoggingOptions : byte
 {
     None = 0,
     Request = 1,

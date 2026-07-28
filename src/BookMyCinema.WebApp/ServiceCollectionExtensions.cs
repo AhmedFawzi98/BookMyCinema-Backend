@@ -1,4 +1,4 @@
-namespace BookMyCinema.App;
+namespace BookMyCinema.WebApp;
 
 public static class ServiceCollectionExtensions
 {

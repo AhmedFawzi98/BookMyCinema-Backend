@@ -1,16 +1,15 @@
 using BookMyCinema.Api;
-using BookMyCinema.App;
+using BookMyCinema.WebApp;
 using BookMyCinema.Application;
 using BookMyCinema.Infrastructure;
 using BookMyCinema.Persistance;
-using BookMyCinema.WebApp;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddWeb()
-    .AddPresentation()
+    .AddApi()
     .AddApplication()
     .AddPersistence(builder.Configuration)
     .AddInfrastructure();

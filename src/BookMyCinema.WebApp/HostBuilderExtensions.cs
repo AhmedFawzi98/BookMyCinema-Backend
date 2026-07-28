@@ -1,5 +1,6 @@
 using System.Data;
 using BookMyCinema.Api.Common.Logging;
+using BookMyCinema.Persistance.Constants;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -18,9 +19,9 @@ public static class HostBuilderExtensions
                 {
                     loggerConfig
                         .Filter.ByIncludingOnly(e => e.Level >= LogEventLevel.Error &&
-                            !e.Properties.ContainsKey(HttpLoggingConstants.IsHttpLog))
+                            !e.Properties.ContainsKey(HttpLogProperties.IsHttpLog))
                         .WriteTo.MSSqlServer(
-                            context.Configuration.GetConnectionString("DefaultConnection"),
+                            context.Configuration.GetConnectionString(ConnectionStringNames.DefaultConnection),
                             sinkOptions: new MSSqlServerSinkOptions
                             {
                                 TableName = "Logs",
@@ -33,7 +34,7 @@ public static class HostBuilderExtensions
                 .WriteTo.Logger(loggerConfig =>
                 {
                     loggerConfig
-                        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey(HttpLoggingConstants.IsHttpLog)) //request/response logs will go into HttpLogs table regardless of the level
+                        .Filter.ByIncludingOnly(e => e.Properties.ContainsKey(HttpLogProperties.IsHttpLog)) //request/response logs will go into HttpLogs table regardless of the level
                         .WriteTo.MSSqlServer(
                             context.Configuration.GetConnectionString("DefaultConnection"),
                             sinkOptions: new MSSqlServerSinkOptions
@@ -59,14 +60,14 @@ public static class HostBuilderExtensions
 
         columnOptions.AdditionalColumns = new List<SqlColumn>
         {
-            new SqlColumn(HttpLoggingConstants.Path, SqlDbType.NVarChar, dataLength: 256) { AllowNull = false },
-            new SqlColumn(HttpLoggingConstants.Method, SqlDbType.NVarChar, dataLength: 10) { AllowNull = false },
-            new SqlColumn(HttpLoggingConstants.StatusCode, SqlDbType.Int) { AllowNull = false },
-            new SqlColumn(HttpLoggingConstants.ElapsedMs, SqlDbType.Int) { AllowNull = false },
-            new SqlColumn(HttpLoggingConstants.TraceId, SqlDbType.NVarChar, dataLength: 64) { AllowNull = false },
-            new SqlColumn(HttpLoggingConstants.UserId, SqlDbType.NVarChar, dataLength: 100) { AllowNull = true },
-            new SqlColumn(HttpLoggingConstants.RequestBodyKey, SqlDbType.NVarChar, dataLength: -1) { AllowNull = true },
-            new SqlColumn(HttpLoggingConstants.ResponseBodyKey, SqlDbType.NVarChar, dataLength: -1) { AllowNull = true }
+            new SqlColumn(HttpLogProperties.Request.Path, SqlDbType.NVarChar, dataLength: 256) { AllowNull = false },
+            new SqlColumn(HttpLogProperties.Request.Method, SqlDbType.NVarChar, dataLength: 10) { AllowNull = false },
+            new SqlColumn(HttpLogProperties.Request.Body, SqlDbType.NVarChar, dataLength: -1) { AllowNull = true },
+            new SqlColumn(HttpLogProperties.Response.StatusCode, SqlDbType.Int) { AllowNull = false },
+            new SqlColumn(HttpLogProperties.Response.Body, SqlDbType.NVarChar, dataLength: -1) { AllowNull = true },
+            new SqlColumn(HttpLogProperties.Diagnostics.ElapsedMs, SqlDbType.Int) { AllowNull = false },
+            new SqlColumn(HttpLogProperties.Diagnostics.TraceId, SqlDbType.NVarChar, dataLength: 64) { AllowNull = false },
+            new SqlColumn(HttpLogProperties.Diagnostics.UserId, SqlDbType.NVarChar, dataLength: 100) { AllowNull = true },
         };
 
         return columnOptions;

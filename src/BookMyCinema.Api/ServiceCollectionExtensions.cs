@@ -7,7 +7,7 @@ namespace BookMyCinema.Api;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddPresentation(this IServiceCollection services)
+    public static IServiceCollection AddApi(this IServiceCollection services)
     {
         services.AddExceptionHandler<GlobalExceptionHandler>();
 
