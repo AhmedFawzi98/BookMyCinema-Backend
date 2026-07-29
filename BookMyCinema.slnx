@@ -1,0 +1,23 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/SqlScripts/">
+    <File Path="SqlScripts/Logging Tables Indexes.sql" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/BookMyCinema.Api/BookMyCinema.Api.csproj" />
+    <Project Path="src/BookMyCinema.Application/BookMyCinema.Application.csproj" />
+    <Project Path="src/BookMyCinema.Domain/BookMyCinema.Domain.csproj" />
+    <Project Path="src/BookMyCinema.Infrastructure/BookMyCinema.Infrastructure.csproj" />
+    <Project Path="src/BookMyCinema.Persistance/BookMyCinema.Persistance.csproj" />
+    <Project Path="src/BookMyCinema.WebApp/BookMyCinema.WebApp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BookMyCinema.Api.IntegrationTests/BookMyCinema.Api.IntegrationTests.csproj" />
+    <Project Path="tests/BookMyCinema.Application.UnitTest/BookMyCinema.Application.UnitTest.csproj" />
+    <Project Path="tests/BookMyCinema.Architecture.Tests/BookMyCinema.Architecture.Tests.csproj" />
+  </Folder>
+</Solution>
