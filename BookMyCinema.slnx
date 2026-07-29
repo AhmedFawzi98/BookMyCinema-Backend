@@ -1,11 +1,19 @@
 <Solution>
+  <Folder Name="/docs/database/">
+    <File Path="docs/database/logical-schema.dbml" />
+    <File Path="docs/database/logical-schema.md" />
+    <File Path="docs/database/logical-schema.svg" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
   </Folder>
-  <Folder Name="/SqlScripts/">
-    <File Path="SqlScripts/Logging Tables Indexes.sql" />
+  <Folder Name="/sql-scripts/">
+    <File Path="sql-scripts/Logging Tables Indexes.sql" />
+  </Folder>
+  <Folder Name="/docs/">
+
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/BookMyCinema.Api/BookMyCinema.Api.csproj" />
