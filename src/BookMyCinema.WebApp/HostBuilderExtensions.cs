@@ -27,7 +27,8 @@ public static class HostBuilderExtensions
                                 TableName = "Logs",
                                 SchemaName = "Logging",
                                 AutoCreateSqlTable = true
-                            }
+                            },
+                            columnOptions: CreateColumnsOptionsForLogsTable()
                         );
                 })
                 // seperate HttpLogs table with custom schema (Request/Response logs for all levels)
@@ -51,12 +52,23 @@ public static class HostBuilderExtensions
         return host;
     }
 
+    private static ColumnOptions CreateColumnsOptionsForLogsTable()
+    {
+        var columnOptions = new ColumnOptions();
+
+        columnOptions.Id.DataType = SqlDbType.BigInt;
+
+        return columnOptions;
+    }
+
     private static ColumnOptions CreateColumnsOptionsForHttpLogsTable()
     {
         var columnOptions = new ColumnOptions();
 
         // Remove XML properties column .. leave rest of columns (Id, Message, MessageTemplate, Level, TimeStamp, Exception)
         columnOptions.Store.Remove(StandardColumn.Properties);
+
+        columnOptions.Id.DataType = SqlDbType.BigInt;
 
         columnOptions.AdditionalColumns = new List<SqlColumn>
         {
@@ -72,4 +84,5 @@ public static class HostBuilderExtensions
 
         return columnOptions;
     }
+
 }
