@@ -1,3 +1,4 @@
+using BookMyCinema.Application.Common.Abstractions;
 using BookMyCinema.Application.User;
 using BookMyCinema.Domain.Common.Audit;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,9 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BookMyCinema.Persistance.Interceptors;
 
-internal class AuditableEntitiesInterceptor(ICurrentUserService _currentUserService)
+internal class AuditableEntitiesInterceptor(
+    ICurrentUserService currentUserService,
+    IDateTimeProvider dateTimeProvider)
     : SaveChangesInterceptor
 {
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -27,8 +30,8 @@ internal class AuditableEntitiesInterceptor(ICurrentUserService _currentUserServ
 
     private void UpdateAuditableEntities(DbContext context)
     {
-        var utcNow = DateTime.UtcNow;
-        var userId = _currentUserService.UserId;
+        var utcNow = dateTimeProvider.UtcNow;
+        var userId = currentUserService.UserId;
 
         foreach (var entry in context.ChangeTracker.Entries())
         {
