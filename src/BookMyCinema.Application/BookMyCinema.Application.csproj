@@ -5,6 +5,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BookMyCinema.Domain\BookMyCinema.Domain.csproj" />
+    <ProjectReference Include="..\BookMyCinema.SharedKernel\BookMyCinema.SharedKernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,6 +21,7 @@
     <Project Path="src/BookMyCinema.Domain/BookMyCinema.Domain.csproj" />
     <Project Path="src/BookMyCinema.Infrastructure/BookMyCinema.Infrastructure.csproj" />
     <Project Path="src/BookMyCinema.Persistance/BookMyCinema.Persistance.csproj" />
+    <Project Path="src/BookMyCinema.SharedKernel/BookMyCinema.SharedKernel.csproj" Id="8d35cf7e-69b5-431b-b6c6-29f07c23b355" />
     <Project Path="src/BookMyCinema.WebApp/BookMyCinema.WebApp.csproj" />
   </Folder>
   <Folder Name="/tests/">

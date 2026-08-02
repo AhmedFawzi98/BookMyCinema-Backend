@@ -3,4 +3,8 @@
   <PropertyGroup>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookMyCinema.SharedKernel\BookMyCinema.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>

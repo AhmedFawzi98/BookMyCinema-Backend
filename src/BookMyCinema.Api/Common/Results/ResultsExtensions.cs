@@ -25,7 +25,7 @@ internal static class ResultExtensions
 
     private static IResult MapFailure(IReadOnlyList<Error> errors)
     {
-        var isValidationError = errors.All(e => e.Type == ErrorType.Validation);
+        var isValidationError = errors.All(e => e.Type == ErrorKind.Validation);
 
         if (isValidationError)
         {
@@ -44,8 +44,8 @@ internal static class ResultExtensions
                 );
 
             return Microsoft.AspNetCore.Http.Results.ValidationProblem(
-                title: MapTitle(ErrorType.Validation),
-                statusCode: MapStatusCode(ErrorType.Validation),
+                title: MapTitle(ErrorKind.Validation),
+                statusCode: MapStatusCode(ErrorKind.Validation),
                 errors: errorDict,
                 extensions: new Dictionary<string, object?>
                 {
@@ -66,27 +66,51 @@ internal static class ResultExtensions
             });
     }
 
-    private static int MapStatusCode(ErrorType type) => type switch
+    private static int MapStatusCode(ErrorKind kind) => kind switch
     {
-        ErrorType.Validation => StatusCodes.Status400BadRequest,
-        ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
-        ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-        ErrorType.NotFound => StatusCodes.Status404NotFound,
-        ErrorType.Conflict => StatusCodes.Status409Conflict,
-        ErrorType.Unprocessable => StatusCodes.Status422UnprocessableEntity,
-        ErrorType.TooManyRequests => StatusCodes.Status429TooManyRequests,
-        _ => StatusCodes.Status500InternalServerError,
+        ErrorKind.Validation =>
+            StatusCodes.Status400BadRequest,
+
+        ErrorKind.AuthenticationFailure =>
+            StatusCodes.Status401Unauthorized,
+
+        ErrorKind.AccessDenied =>
+            StatusCodes.Status403Forbidden,
+
+        ErrorKind.NotFound =>
+            StatusCodes.Status404NotFound,
+
+        ErrorKind.Conflict =>
+            StatusCodes.Status409Conflict,
+
+        ErrorKind.RuleViolation =>
+            StatusCodes.Status422UnprocessableEntity,
+
+        _ =>
+            StatusCodes.Status500InternalServerError
     };
 
-    private static string MapTitle(ErrorType type) => type switch
+    private static string MapTitle(ErrorKind kind) => kind switch
     {
-        ErrorType.Validation => "Validation error",
-        ErrorType.Unauthorized => "Unauthorized",
-        ErrorType.Forbidden => "Forbidden",
-        ErrorType.NotFound => "Resource not found",
-        ErrorType.Conflict => "Conflict",
-        ErrorType.Unprocessable => "Unprocessable entity",
-        ErrorType.TooManyRequests => "Too many requests",
-        _ => "Server error"
+        ErrorKind.Validation =>
+            "Validation error",
+
+        ErrorKind.AuthenticationFailure =>
+            "Authentication failed",
+
+        ErrorKind.AccessDenied =>
+            "Access denied",
+
+        ErrorKind.NotFound =>
+            "Resource not found",
+
+        ErrorKind.Conflict =>
+            "Conflict",
+
+        ErrorKind.RuleViolation =>
+            "Business rule violation",
+
+        _ =>
+            "Server error"
     };
 }

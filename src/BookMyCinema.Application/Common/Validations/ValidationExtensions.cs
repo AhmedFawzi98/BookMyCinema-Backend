@@ -9,7 +9,7 @@ internal static class ValidationExtensions
         return result.Errors
             .Select(f => new Error(
                 code: f.ErrorCode ?? "Validation.Unknown",
-                type: ErrorType.Validation,
+                type: ErrorKind.Validation,
                 message: f.ErrorMessage,
                 field: string.IsNullOrWhiteSpace(f.PropertyName)
                     ? null
