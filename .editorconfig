@@ -4,29 +4,40 @@ root = true
 # --- white space ---
 indent_style = space
 indent_size = 4
+tab_width = 4
 end_of_line = crlf
 charset = utf-8
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+
 [*.cs]
-# --- code style: namespaces, using statements, braces, constructors, methods, expressions ---
-dotnet_sort_system_directives_first = true # sort usings (put system usings first)
-dotnet_separate_import_directive_groups = false # no blank lines between usings
+# --- code style: namespaces, using statements, braces, constructors, methods, expressions, etc. ---
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
 csharp_using_directive_placement = outside_namespace
 csharp_prefer_simple_using_statement = true 
 csharp_prefer_braces = true:error
-csharp_new_line_before_open_brace = all #vertical braces style 
+csharp_new_line_before_open_brace = all 
 csharp_style_namespace_declarations = file_scoped:error
 csharp_style_prefer_top_level_statements = true:suggestion
 csharp_style_prefer_primary_constructors = true:suggestion
+csharp_style_prefer_switch_expression = true:error
+csharp_style_var_for_built_in_types = false:error
+csharp_style_var_when_type_is_apparent = true:error
+csharp_style_var_elsewhere = false:error
+#prefer pattern matching with 'is' on cast with 'as' and null check
+csharp_style_pattern_matching_over_as_with_null_check = true:error
+#prefer pattern matching with 'is' and casting in same step, rather than castign separately
+csharp_style_pattern_matching_over_is_with_cast_check = true:error
+
+
 dotnet_style_prefer_auto_properties = true:suggestion
 dotnet_style_prefer_simplified_boolean_expressions = true:error
-
-
-# --- modifiers enforcement ---
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:error
-
+# enforce readonly modifier for fields that are assigned only during declaration or construction.
+dotnet_style_readonly_field = true:error
 
 # --- naming: define styles and cases ---
 dotnet_naming_style.pascal_case.capitalization = pascal_case
@@ -57,14 +68,21 @@ dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = error
 dotnet_naming_rule.private_fields_should_be_camel_case.symbols = private_fields
 dotnet_naming_symbols.private_fields.applicable_kinds = field
 dotnet_naming_rule.private_fields_should_be_camel_case.style = camel_case_with_underscore_prefix
-dotnet_naming_symbols.private_fields.applicable_accessibilities = private #apply these rules only if field is private
+
+#apply these rules only if field is private
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private 
 dotnet_naming_rule.private_fields_should_be_camel_case.severity = error
 
+
 # --- analyzer severity examples ---
-dotnet_diagnostic.CA2000.severity = error #dispose objects
-dotnet_diagnostic.CA1822.severity = suggestion #Mark members that should be static as static!
-dotnet_diagnostic.CS8618.severity = error  #if a null accepting type is not marked as nullable it must be initalized 
-dotnet_diagnostic.CS8602.severity = error #enfore null check for nullable types
+#dispose objects
+dotnet_diagnostic.CA2000.severity = error
+#Mark members that should be static as static!
+dotnet_diagnostic.CA1822.severity = error
+#if a null accepting type is not marked as nullable it must be initalized 
+dotnet_diagnostic.CS8618.severity = error
+#enfore null check for nullable types
+dotnet_diagnostic.CS8602.severity = error 
 
 
 # Xml files

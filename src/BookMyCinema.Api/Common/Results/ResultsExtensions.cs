@@ -25,7 +25,7 @@ internal static class ResultExtensions
 
     private static IResult MapFailure(IReadOnlyList<Error> errors)
     {
-        var isValidationError = errors.All(e => e.Type == ErrorKind.Validation);
+        bool isValidationError = errors.All(e => e.Type == ErrorKind.Validation);
 
         if (isValidationError)
         {
@@ -53,7 +53,7 @@ internal static class ResultExtensions
                 });
         }
 
-        var first = errors[0];
+        Error first = errors[0];
 
         //sets both ProblemDetails Status field, and http response status code
         return Microsoft.AspNetCore.Http.Results.Problem(
