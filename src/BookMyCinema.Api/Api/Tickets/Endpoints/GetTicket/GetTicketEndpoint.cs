@@ -14,7 +14,7 @@ public class GetTicketEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        var group = TicketsGrouper.Get(app);
+        RouteGroupBuilder group = TicketsGrouper.Get(app);
 
         group.MapGet(TicketsRoutes.GetTicket.Route, GetTicketHandler)
             .WithTags(GetTicketsDocumentation.Tag)

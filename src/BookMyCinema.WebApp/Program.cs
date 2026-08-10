@@ -5,7 +5,7 @@ using BookMyCinema.Infrastructure;
 using BookMyCinema.Persistance;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddWeb()
@@ -16,7 +16,7 @@ builder.Services
 
 builder.Host.AddSerilog();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 app.ConfigureWebApplication();
 
