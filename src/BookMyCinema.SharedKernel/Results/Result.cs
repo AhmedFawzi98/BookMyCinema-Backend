@@ -34,10 +34,10 @@ public class Result<T> : IResult
     public static Result<T> Failure(params Error[] errors) =>
       new(false, default(T), errors.ToList());
 
-    //return UserErrors.EmailTaken; instead of return Result<SomeType>.Failure(UserErrors.EmailTaken);
+    //return someType; instead of return Result<SomeType>.Success(someType);
     public static implicit operator Result<T>(T value) => Success(value);
 
-    //return someType; instead of return Result<SomeType>.Success(someType);
+    //return UserErrors.EmailTaken; instead of return Result<SomeType>.Failure(UserErrors.EmailTaken);
     public static implicit operator Result<T>(Error error) => Failure(error);
 }
 

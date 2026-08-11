@@ -21,7 +21,7 @@ internal static class ValidationExtensions
     //Address.Area -> Area 
     private static string ExtractFieldName(string propertyName)
     {
-        var lastDot = propertyName.LastIndexOf('.');
+        int lastDot = propertyName.LastIndexOf('.');
         return lastDot >= 0 ? propertyName[(lastDot + 1)..] : propertyName;
     }
 

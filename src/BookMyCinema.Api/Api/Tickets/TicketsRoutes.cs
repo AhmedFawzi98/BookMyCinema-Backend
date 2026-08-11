@@ -5,6 +5,6 @@ internal static class TicketsRoutes
     internal static class GetTicket
     {
         public const string Route = "{id:guid}";
-        public static string ForId(Guid id) => $"tickets/{id}";
+        public static string ForId(Guid id) => $"tickets/{id}"; //not used, example for now
     }
 }
