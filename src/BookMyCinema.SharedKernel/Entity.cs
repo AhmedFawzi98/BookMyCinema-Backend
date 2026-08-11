@@ -15,7 +15,7 @@ public abstract class Entity<TId>
         Id = id;
     }
 
-    public TId Id { get; protected init; } = default!;
+    public TId Id { get; private set; } = default!;
 
 
     public IReadOnlyList<IDomainEvent> DomainEvents =>
@@ -68,4 +68,21 @@ public abstract class Entity<TId>
 
         return HashCode.Combine(GetType(), Id);
     }
+
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
+    {
+        if (left is null && right is null)
+        {
+            return true;
+        }
+        if (left is null || right is null)
+        {
+            return false;
+        }
+
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
+        => !(left == right);
 }
