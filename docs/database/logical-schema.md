@@ -10,11 +10,13 @@ This document records the intent behind the structure, relationships, keys, inde
 This document and the related DBML will be revised and aligned with entities and models as they are implemented in the ORM.
 The DBML is the source of truth for the logical schema, and the EF Core model is the source of truth for the application model.
 Both are aligned (columns naming, lengths, nullability) and tables/entities relationships
+so dbml, and this MD file are always kept aligned for each colum nullabilty, length, naming.
+
 
 ### Schema artifacts
 
 - **DBML source of truth:** [`logical-schema.final.dbml`](./logical-schema.final.dbml)
-- **Static diagram snapshot:** [`logical-schema.svg`](./logical-schema.svg)
+- **Static diagram snapshot: [to be added].
 - **Live dbdiagram:** https://dbdiagram.io/d/BookMyCinema-6a085a82697f99c1678c1c90
 - **ERD diagram:** https://app.diagrams.net/ (will be replaced with live link for ERD drawn using imported XMLs based on DBML) will be add as a separate artifact and will be referenced in this document.
 - **Physical Schema:** a physical schema generated from the DBMS will be added as a separate artifact and will be referenced in this document.
@@ -93,7 +95,7 @@ Typical fields:
 
 The audit actor columns are nullable because work can be performed by background jobs, imports, deployment seeders, or other system processes.
 
-For diagram clarity, audit actor relationships is omitted from the schema diagram. although in the physical SQL Server implementation, every `CreatedByUserId`, `ModifiedByUserId`, and `ActivationChangedByUserId` column is intended to be an explicit nullable foreign key to `ApplicationUsers.Id`, with `NO ACTION` delete behavior.
+For diagram clarity , audit actor relationships is omitted from the schema diagram. although in the physical SQL Server implementation, every `CreatedByUserId`, `ModifiedByUserId`, and `ActivationChangedByUserId` column is intended to be an explicit nullable foreign key to `ApplicationUsers.Id`, with `NO ACTION` delete and update behavior.
 
 ### 2.6 Activation is not soft deletion
 
@@ -125,7 +127,7 @@ Pessimistic concurrency remains operation-specific and should be implemented thr
 | Local schedule dates                  | `date`                         |
 | Local schedule times                  | `time`                         |
 | Money                                 | `decimal(18,2)` initially      |
-| Currency                              | `char(3)`                      |
+| Currency Code                         | ISO 4217 alpha-3 `char(3)`     |
 | Country code                          | ISO 3166-1 alpha-2, `char(2)`  |
 | Payment Provider references           | Provider-appropriate `varchar` |
 
@@ -141,14 +143,12 @@ A small normalized lookup for countries.
 
 Key fields:
 
-- `Id smallint`
-- `IsoCode char(2)`
+- `Code char(2)`
 - `Name nvarchar(100)`
 
-Constraints and indexes:
+Primary Key - Constraints - Indexes:
 
-- Primary key on `Id`
-- Unique index on `IsoCode`
+- Primary key on `Code`
 
 Only the country level is normalized initially. Lower geographic levels remain descriptive branch data (free text).
 
@@ -158,16 +158,30 @@ Stores supported IANA time-zone identifiers and platform display labels.
 
 Key fields:
 
-- `Id`
+- `Id smallint`
 - `IanaId`
-- `DisplayName`
+- `Name nvarchar(100)`
 
-Constraints and indexes:
+Primary Key - Constraints - Indexes:
 
 - Primary key on `Id`
 - Unique index on `IanaId`
 
-`IanaId` is authoritative. `DisplayName` is a platform-managed label. This lookup is deployment- or administrator-seeded and does not require normal audit fields.
+`IanaId` is authoritative. `Name` is a platform-managed label. This lookup is deployment- or administrator-seeded and does not require normal audit fields.
+
+
+### `Currencies`
+
+Reference-data lookup containing supported currencies.
+
+Key fields:
+- `Code char(3)`
+- `Name nvarchar(50)`
+
+Primary Key - Constraints - Indexes:
+
+- Primary key on `Code`
+
 
 ### `ApplicationUsers`
 
@@ -180,7 +194,7 @@ Key fields:
 - audit fields
 - activation fields
 
-Constraints and indexes:
+Primary Key - Constraints - Indexes:
 
 - Primary key on `Id`
 - Unique index on `PublicId`
@@ -202,7 +216,7 @@ Key fields:
 - audit fields
 - activation fields
 
-Constraints and indexes:
+Primary Key - Constraints - Indexes:
 
 - Primary key on `Id`
 - Unique `PublicId`
@@ -238,11 +252,13 @@ Primary Key - Constraints - Indexes:
 - Unique `PublicId`
 - Unique `(CinemaId, Slug)`
 
-Relationships:
+Foregin keys:
 
-- Many branches belong to one cinema.
-- Each branch references one supported time zone.
-- Each branch references one country.
+- `CinemaId` → `Cinemas(Id)`
+- `TimeZoneId` → `TimeZones(Id)`
+- `CountryId` → `Countries(Id)`
+- `CurrencyCode` → `Currencies(Code)`
+
 
 Location strategy:
 
@@ -268,12 +284,18 @@ Key fields:
 - audit fields
 - activation fields
 
+`ScopeType` distinguishes organization-wide access from access limited to selected branches. It is a domain enum.
+
 Primary Key - Constraints - Indexes:
 
 - Composite primary key `(CinemaId, UserId)`
 - Index on `UserId`
 
-`ScopeType` distinguishes organization-wide access from access limited to selected branches. It is a domain enum.
+Foreign keys:
+
+- `CinemaId` → `Cinemas(Id)`
+- `UserId` → `ApplicationUsers(Id)`
+
 
 ### `CinemaEmployeeBranchAssignments`
 
@@ -290,6 +312,12 @@ Primary Key - Constraints - Indexes:
 
 - Composite primary key `(CinemaId, UserId, CinemaBranchId)`
 - Index on `UserId`
+
+
+Foreign keys:
+
+- composite `(CinemaId, UserId)` → `CinemaEmployees(CinemaId, UserId)`
+- composite `(CinemaId, CinemaBranchId)` → `CinemaBranches(CinemaId, Id)`
 
 Composite foreign keys ensure that the employee membership and assigned branch belong to the same cinema. Rows may be physically inserted and deleted as assignments change.
 
@@ -352,7 +380,6 @@ Foreign keys:
 - nullable `ModifiedByUserId` → `ApplicationUsers(Id)`
 - nullable `ActivationChangedByUserId` → `ApplicationUsers(Id)`
 
-The composite branch foreign key proves that the hall belongs to the stated cinema and branch.
 
 ### `Seats`
 
@@ -675,6 +702,7 @@ Foreign keys:
 
 - `ShowtimeScheduleId` → `ShowtimeSchedules(Id)`
 - `CinemaSeatTypeId` → `CinemaSeatTypes(Id)`
+- `CurrencyCode` → `Currencies(Code)`
 - nullable `CreatedByUserId` → `ApplicationUsers(Id)`
 
 Application-enforced invariants:
@@ -684,7 +712,8 @@ Application-enforced invariants:
 - it is actually used by active seats in the hall;
 - every active seat type used by the hall receives one price;
 - irrelevant seat types cannot be priced;
-- currency matches the branch currency.
+- currency matches the branch currency (populated automatically from the branch configuration not user input.)
+  just shown in UI for user reference.
 
 This is another intentionally application-enforced ownership rule.
 
@@ -795,6 +824,7 @@ Foreign keys:
 
 - nullable `UserId` → `ApplicationUsers(Id)`
 - composite `(CinemaId, CinemaBranchId, ShowtimeId)` → `Showtimes(CinemaId, CinemaBranchId, Id)`
+- `CurrencyCode` → `Currencies(Code)`
 - nullable `CreatedByUserId` → `ApplicationUsers(Id)`
 - nullable `ModifiedByUserId` → `ApplicationUsers(Id)`
 
@@ -803,6 +833,9 @@ Customer name, email, and phone are persisted booking-time snapshots for both gu
 `SeatsCount` and `TotalPriceAmount` are persisted even though they can initially be derived from booking-seat rows. They remain available if `BookingSeats` are removed during cancellation, expiry, or failure handling and preserve historical and reconciliation meaning.
 
 `TotalPriceAmount` is the final payable amount snapshot. Calculation belongs to Application logic.
+
+`CurrencyCode` is from the ShowtimeSchedule of that Showtime.
+
 
 ### `BookingSeats`
 
@@ -866,6 +899,7 @@ Primary Key - Constraints - Indexes:
 Foreign keys:
 
 - `BookingId` → `Bookings(Id)`
+- `CurrencyCode` → `Currencies(Code)`
 - nullable `CreatedByUserId` → `ApplicationUsers(Id)`
 - nullable `ModifiedByUserId` → `ApplicationUsers(Id)`
 

@@ -2,7 +2,6 @@
   <Folder Name="/docs/database/">
     <File Path="docs/database/logical-schema.dbml" />
     <File Path="docs/database/logical-schema.md" />
-    <File Path="docs/database/logical-schema.svg" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />

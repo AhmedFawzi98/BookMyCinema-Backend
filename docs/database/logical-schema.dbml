@@ -10,13 +10,8 @@ Project BookMyCinema {
 }
 
 Table Countries {
-  Id smallint [pk, increment]
-  IsoCode char(2) [not null]
+  Code char(2) [pk, not null]
   Name nvarchar(100) [not null]
-
-  indexes {
-    IsoCode [unique, name: 'UX_Countries_IsoCode']
-  }
 
   Note: '''
   Uses ISO 3166-1 alpha-2 country codes.
@@ -27,12 +22,23 @@ Table Countries {
 Table TimeZones {
   Id int [pk, increment]
   IanaId varchar(100) [not null]
-  DisplayName nvarchar(200) [not null]
+  Name nvarchar(200) [not null]
 
   indexes {
     IanaId [unique, name: 'UX_TimeZones_IanaId']
   }
 }
+
+Table Currencies {
+  Code char(3) [pk, not null]
+  Name nvarchar(50) [not null]
+
+  Note: '''
+  Uses ISO 4217 three-letter currency codes.
+  Currency is modeled as normalized reference data and may be referenced by branches and persisted monetary snapshots.
+  '''
+}
+
 
 Table ApplicationUsers {
   Id int [pk, increment]
@@ -82,7 +88,7 @@ Table CinemaBranches {
   Slug varchar(150) [not null]
   CurrencyCode char(3) [not null]
   TimeZoneId int [not null]
-  CountryId smallint [not null]
+  CountryCode char(2) [not null]
   AdministrativeArea nvarchar(150)
   Locality nvarchar(150) [not null]
   AddressLine1 nvarchar(250) [not null]
@@ -102,7 +108,7 @@ Table CinemaBranches {
   }
 
   Note: '''
-  Country is normalized through CountryId.
+  Country is normalized through CountryCode.
   AdministrativeArea is free text for state, governorate, province, region, or equivalent.
   Locality is free text for city, town, district, municipality, area, or equivalent.
   AddressLine1 and AddressLine2 hold the detailed branch address.
@@ -484,7 +490,6 @@ Table BookingSeats {
   ShowtimeId int [not null]
   SeatId int [not null]
   PriceAmount decimal(18,2) [not null]
-  CurrencyCode char(3) [not null]
   CreatedAtUtc datetime2 [not null]
   CreatedByUserId int
 
@@ -586,7 +591,8 @@ Table CinemaLogos {
 
 Ref: CinemaBranches.CinemaId > Cinemas.Id [delete: no action, update: no action]
 Ref: CinemaBranches.TimeZoneId > TimeZones.Id [delete: no action, update: no action]
-Ref: CinemaBranches.CountryId > Countries.Id [delete: no action, update: no action]
+Ref: CinemaBranches.CountryCode > Countries.Code [delete: no action, update: no action]
+Ref: CinemaBranches.CurrencyCode > Currencies.Code [delete: no action, update: no action]
 Ref: CinemaEmployees.CinemaId > Cinemas.Id [delete: no action, update: no action]
 Ref: CinemaEmployees.UserId > ApplicationUsers.Id [delete: no action, update: no action]
 Ref: CinemaEmployeeBranchAssignments.(CinemaId, UserId) > CinemaEmployees.(CinemaId, UserId) [delete: no action, update: no action]
@@ -608,15 +614,18 @@ Ref: ShowtimeSchedules.(CinemaId, CinemaBranchId, HallId) > Halls.(CinemaId, Cin
 Ref: ShowtimeSchedules.(CinemaId, CinemaBranchId, CinemaBranchMovieId) > CinemaBranchMovies.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
 Ref: ShowtimeScheduleSeatTypePrices.ShowtimeScheduleId > ShowtimeSchedules.Id [delete: no action, update: no action]
 Ref: ShowtimeScheduleSeatTypePrices.CinemaSeatTypeId > CinemaSeatTypes.Id [delete: no action, update: no action]
+Ref: ShowtimeScheduleSeatTypePrices.CurrencyCode > Currencies.Code [delete: no action, update: no action]
 Ref: Showtimes.(CinemaId, CinemaBranchId, ShowtimeScheduleId) > ShowtimeSchedules.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
 Ref: ShowtimeSeats.ShowtimeId > Showtimes.Id [delete: no action, update: no action]
 Ref: ShowtimeSeats.SeatId > Seats.Id [delete: no action, update: no action]
 Ref: ShowtimeSeats.CinemaSeatTypeId > CinemaSeatTypes.Id [delete: no action, update: no action]
 Ref: Bookings.UserId > ApplicationUsers.Id [delete: no action, update: no action]
 Ref: Bookings.(CinemaId, CinemaBranchId, ShowtimeId) > Showtimes.(CinemaId, CinemaBranchId, Id) [delete: no action, update: no action]
+Ref: Bookings.CurrencyCode > Currencies.Code [delete: no action, update: no action]
 Ref: BookingSeats.(BookingId, ShowtimeId) > Bookings.(Id, ShowtimeId) [delete: no action, update: no action]
 Ref: BookingSeats.(ShowtimeId, SeatId) > ShowtimeSeats.(ShowtimeId, SeatId) [delete: no action, update: no action]
 Ref: Payments.BookingId > Bookings.Id [delete: no action, update: no action]
+Ref: Payments.CurrencyCode > Currencies.Code [delete: no action, update: no action]
 Ref: Tickets.BookingSeatId > BookingSeats.Id [delete: no action, update: no action]
 Ref: UserProfileImages.UserId > ApplicationUsers.Id [delete: no action, update: no action]
 Ref: CinemaLogos.CinemaId > Cinemas.Id [delete: no action, update: no action]
