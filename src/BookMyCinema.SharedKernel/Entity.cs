@@ -1,10 +1,10 @@
+using BookMyCinema.SharedKernel.Events;
+
 namespace BookMyCinema.SharedKernel;
 
 public abstract class Entity<TId>
     where TId : notnull, IEquatable<TId>
 {
-    private readonly List<IDomainEvent> _domainEvents = [];
-
     protected Entity()
     {
 
@@ -16,20 +16,6 @@ public abstract class Entity<TId>
     }
 
     public TId Id { get; private set; } = default!;
-
-
-    public IReadOnlyList<IDomainEvent> DomainEvents =>
-        _domainEvents.AsReadOnly();
-
-    public void ClearDomainEvents()
-    {
-        _domainEvents.Clear();
-    }
-
-    public void Raise(IDomainEvent domainEvent)
-    {
-        _domainEvents.Add(domainEvent);
-    }
 
     public override bool Equals(object? obj)
     {
