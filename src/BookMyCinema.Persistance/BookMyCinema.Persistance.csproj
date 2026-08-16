@@ -4,6 +4,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Configurations\" />
     <Folder Include="Migrations\" />
     <Folder Include="Seeders\" />
   </ItemGroup>

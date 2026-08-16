@@ -1,8 +1,7 @@
-using BookMyCinema.Persistance.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace BookMyCinema.Persistance.Configurations;
+namespace BookMyCinema.Persistance.Country;
 
 internal sealed class CountryConfiguration
     : IEntityTypeConfiguration<Country>
@@ -11,7 +10,8 @@ internal sealed class CountryConfiguration
     {
         builder.ToTable("Countries");
 
-        builder.HasKey(x => x.Code);
+        builder.HasKey(x => x.Code)
+            .HasName("PK_Countries");
 
         builder.Property(x => x.Code)
             .HasColumnType("char(2)")
