@@ -523,8 +523,7 @@ Table Payments {
 }
 
 Table Tickets {
-  Id bigint [pk, increment]
-  BookingSeatId bigint [not null]
+  BookingSeatId bigint [pk]
   TicketReference binary(16) [not null]
   Status tinyint [not null]
   UsedAtUtc datetime2
@@ -536,7 +535,6 @@ Table Tickets {
   CreatedByUserId int
 
   indexes {
-    BookingSeatId [unique, name: 'UX_Tickets_BookingSeatId']
     TicketReference [unique, name: 'UX_Tickets_TicketReference']
   }
 

@@ -913,10 +913,11 @@ Provider session expiry closes abandoned unpaid journeys.
 
 Represents the credential issued for one confirmed booking seat.
 
+It is a weak shared-primary-key one-to-one dependent of `Movies`:
+
 Important fields:
 
-- `Id bigint`
-- `BookingSeatId`
+- `BookingSeatId bigint` 
 - `TicketReference`
 - `Status`
 - `UsedAtUtc`,
@@ -928,8 +929,7 @@ Important fields:
 
 Primary Key - Constraints - Indexes:
 
-- Primary key on `Id`
-- Unique `BookingSeatId`
+- Primary key on `BookingSeatId`
 - Unique `TicketReference`
 
 Foreign keys:
@@ -1009,14 +1009,23 @@ Foreign keys:
 
 ## 5. Weak dependents
 
-### These depend on their owner for identity and/or lifecycle:
+### Shared-PK one-to-one dependents
+#### These depend on their owner for identity and/or lifecycle:
 
-- `HallLayoutCells`
 - `UserProfileImages`
 - `CinemaLogos`
 - `MoviePosterMirrors`
+- `Tickets`
 
 Shared-primary-key dependents model optional one-to-one data without introducing unnecessary independent identity(Surrogate key).
+as the dependent entity has no meaningful identity independently of its principal(owner) entity and the relationship is strictly one-to-one, the dependent uses the principal entity foreign key as its primary key rather than introducing a separate surrogate identity column.
+The shared key is therefore both PK and FK and must not be configured as an identity/incrementing column.
+
+### one to many dependents:
+
+- `HallLayoutCells`
+
+many per hall, composite PK includes owner key
 
 ---
 
