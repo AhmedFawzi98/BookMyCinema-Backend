@@ -2,6 +2,7 @@ using BookMyCinema.Application.Common.Abstractions;
 using BookMyCinema.Application.User;
 using BookMyCinema.Domain.Common.Audit;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BookMyCinema.Persistance.Interceptors;
@@ -30,10 +31,10 @@ internal class AuditableEntitiesInterceptor(
 
     private void UpdateAuditableEntities(DbContext context)
     {
-        var utcNow = dateTimeProvider.UtcNow;
-        var userId = currentUserService.UserId;
+        DateTime utcNow = dateTimeProvider.UtcNow;
+        int? userId = currentUserService.UserId;
 
-        foreach (var entry in context.ChangeTracker.Entries())
+        foreach (EntityEntry entry in context.ChangeTracker.Entries())
         {
             if (entry.State == EntityState.Added && entry.Entity is ICreationAuditable creationAuditable)
             {
