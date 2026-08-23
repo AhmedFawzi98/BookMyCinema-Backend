@@ -25,12 +25,12 @@ public static class WebApplicationExtensions
 
     private static WebApplication MapEndpoints(this WebApplication app)
     {
-        var baseGroupBuilder = app.MapGroup(ApiRoutes.ApiBase)
+        RouteGroupBuilder baseGroupBuilder = app.MapGroup(ApiRoutes.ApiBase)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
-        var endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
+        IEnumerable<IEndpoint> endpoints = app.Services.GetRequiredService<IEnumerable<IEndpoint>>();
 
-        foreach (var endpoint in endpoints)
+        foreach (IEndpoint endpoint in endpoints)
         {
             endpoint.MapEndpoint(baseGroupBuilder);
         }
@@ -44,8 +44,8 @@ public static class WebApplicationExtensions
         {
             options.GetLevel = (httpContext, elapsed, ex) =>
             {
-                var endpoint = httpContext.GetEndpoint();
-                var attr = endpoint?.Metadata.GetMetadata<HttpLoggingAttribute>();
+                Endpoint? endpoint = httpContext.GetEndpoint();
+                HttpLoggingAttribute? attr = endpoint?.Metadata.GetMetadata<HttpLoggingAttribute>();
 
                 if (attr is null || attr.Options == HttpLoggingOptions.None)
                 {
@@ -69,8 +69,8 @@ public static class WebApplicationExtensions
 
             options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
             {
-                var endpoint = httpContext.GetEndpoint();
-                var attr = endpoint?.Metadata.GetMetadata<HttpLoggingAttribute>();
+                Endpoint? endpoint = httpContext.GetEndpoint();
+                HttpLoggingAttribute? attr = endpoint?.Metadata.GetMetadata<HttpLoggingAttribute>();
 
                 if (attr is null || attr.Options == HttpLoggingOptions.None)
                 {
@@ -85,7 +85,7 @@ public static class WebApplicationExtensions
                     diagnosticContext.Set(HttpLogProperties.Request.Path, httpContext.Request.Path);
                     diagnosticContext.Set(HttpLogProperties.Diagnostics.TraceId, Activity.Current?.TraceId.ToString());
 
-                    var userId = httpContext.User?.Identity?.Name;
+                    string? userId = httpContext.User?.Identity?.Name;
                     if (!string.IsNullOrEmpty(userId))
                     {
                         diagnosticContext.Set(HttpLogProperties.Diagnostics.UserId, userId);
@@ -96,25 +96,25 @@ public static class WebApplicationExtensions
                 {
                     diagnosticContext.Set(HttpLogProperties.Response.StatusCode, httpContext.Response.StatusCode);
 
-                    if (httpContext.Items.TryGetValue(HttpLogProperties.Diagnostics.ElapsedMs, out var elapsed))
+                    if (httpContext.Items.TryGetValue(HttpLogProperties.Diagnostics.ElapsedMs, out object? elapsed))
                     {
                         diagnosticContext.Set(HttpLogProperties.Diagnostics.ElapsedMs, Convert.ToInt32(elapsed));
                     }
                 }
 
-                if (attr.LogsRequestBody && httpContext.Items.TryGetValue(HttpLogProperties.Request.Body, out var reqBody))
+                if (attr.LogsRequestBody && httpContext.Items.TryGetValue(HttpLogProperties.Request.Body, out object? reqBody))
                 {
                     diagnosticContext.Set(HttpLogProperties.Request.Body, reqBody?.ToString());
                 }
 
-                if (attr.LogsResponseBody && httpContext.Items.TryGetValue(HttpLogProperties.Response.Body, out var resBody))
+                if (attr.LogsResponseBody && httpContext.Items.TryGetValue(HttpLogProperties.Response.Body, out object? resBody))
                 {
                     diagnosticContext.Set(HttpLogProperties.Response.Body, resBody?.ToString());
                 }
             };
         });
 
-        app.UseMiddleware<HttpRequestResponseBodyLoggingHelperMiddleware>();
+        app.UseMiddleware<HttpBodyCaptureMiddleware>();
 
         return app;
     }

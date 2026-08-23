@@ -34,7 +34,7 @@ internal class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : 
             DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
         };
 
-        var json = JsonSerializer.Serialize(problemDetails, options);
+        string json = JsonSerializer.Serialize(problemDetails, options);
         await response.WriteAsync(json, cancellationToken);
     }
 }

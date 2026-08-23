@@ -4,7 +4,6 @@ using BookMyCinema.Persistance.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace BookMyCinema.Persistance;
 
@@ -40,12 +39,12 @@ public static class ServiceCollectionExtensions
 
     private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString =
+        string? connectionString =
          configuration.GetConnectionString(ConnectionStringNames.DefaultConnection)
          ?? throw new InvalidOperationException(
              $"Connection string '{ConnectionStringNames.DefaultConnection}' was not found.");
 
-        var efOptions = configuration
+        EntityFrameworkOptions efOptions = configuration
               .GetRequiredSection(EntityFrameworkOptions.SectionName)
               .Get<EntityFrameworkOptions>()
                    ?? throw new InvalidOperationException(

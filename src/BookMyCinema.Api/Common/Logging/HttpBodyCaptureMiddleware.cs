@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace BookMyCinema.Api.Common.Logging;
 
-public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
+public sealed class HttpBodyCaptureMiddleware : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var endpoint = context.GetEndpoint();
-        var attr = endpoint?.Metadata.GetMetadata<HttpLoggingAttribute>();
+        Endpoint? endpoint = context.GetEndpoint();
+        HttpLoggingAttribute? attr = endpoint?.Metadata.GetMetadata<HttpLoggingAttribute>();
 
         if (attr is null || attr.Options == HttpLoggingOptions.None)
         {
@@ -19,7 +19,7 @@ public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
         await HandleAsync(context, attr, next);
     }
 
-    private async Task HandleAsync(HttpContext context, HttpLoggingAttribute attr, RequestDelegate next)
+    private static async Task HandleAsync(HttpContext context, HttpLoggingAttribute attr, RequestDelegate next)
     {
         if (attr.LogsRequestBody)
         {
@@ -37,7 +37,7 @@ public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
 
     private static async Task CaptureRequestBodyAsync(HttpContext context)
     {
-        var request = context.Request;
+        HttpRequest request = context.Request;
 
         if (!request.Body.CanRead || request.ContentLength == 0)
         {
@@ -52,18 +52,18 @@ public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
             detectEncodingFromByteOrderMarks: false,
             leaveOpen: true);
 
-        var body = await reader.ReadToEndAsync();
+        string body = await reader.ReadToEndAsync();
         request.Body.Position = 0;
 
         context.Items[HttpLogProperties.Request.Body] = body;
     }
 
-    private async Task CaptureWithResponseBufferingAsync(
+    private static async Task CaptureWithResponseBufferingAsync(
         HttpContext context,
         HttpLoggingAttribute attr,
         RequestDelegate next)
     {
-        var originalResponseBody = context.Response.Body;
+        Stream originalResponseBody = context.Response.Body;
         try
         {
             using var buffer = new MemoryStream();
@@ -80,7 +80,7 @@ public sealed class HttpRequestResponseBodyLoggingHelperMiddleware : IMiddleware
             // Read response after endpoint writes it
             buffer.Position = 0;
             using var reader = new StreamReader(buffer, Encoding.UTF8, false, leaveOpen: true);
-            var responseBody = await reader.ReadToEndAsync();
+            string responseBody = await reader.ReadToEndAsync();
 
             context.Items[HttpLogProperties.Response.Body] = responseBody;
 

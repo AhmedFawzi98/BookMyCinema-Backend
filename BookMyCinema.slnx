@@ -1,7 +1,25 @@
 <Solution>
-  <Folder Name="/docs/database/">
-    <File Path="docs/database/logical-schema.dbml" />
-    <File Path="docs/database/logical-schema.md" />
+  <Folder Name="/docs/api/">
+    <File Path="docs/api/overview.md" />
+  </Folder>
+  <Folder Name="/docs/architecture/">
+    <File Path="docs/architecture/clean-architecture.md" />
+  </Folder>
+  <Folder Name="/docs/development/">
+    <File Path="docs/development/tooling.md" />
+  </Folder>
+  <Folder Name="/docs/error-handling/">
+    <File Path="docs/error-handling/results-pattern.md" />
+  </Folder>
+  <Folder Name="/docs/observability/">
+    <File Path="docs/observability/logging.md" />
+  </Folder>
+  <Folder Name="/docs/persistence/">
+    <File Path="docs/persistence/logical-schema.dbml" />
+    <File Path="docs/persistence/logical-schema.md" />
+  </Folder>
+  <Folder Name="/docs/testing/">
+    <File Path="docs/testing/architecture-testing.md" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
@@ -12,7 +30,7 @@
     <File Path="sql-scripts/Logging Tables Indexes.sql" />
   </Folder>
   <Folder Name="/docs/">
-
+    <File Path="docs/documentation-index.md" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/BookMyCinema.Api/BookMyCinema.Api.csproj" />

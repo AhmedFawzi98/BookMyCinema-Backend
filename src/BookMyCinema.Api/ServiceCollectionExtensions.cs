@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
 
         services.AddOpenApi();
 
-        services.AddScoped<HttpRequestResponseBodyLoggingHelperMiddleware>();
+        services.AddScoped<HttpBodyCaptureMiddleware>();
 
         return services;
     }

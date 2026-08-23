@@ -5,7 +5,7 @@ namespace BookMyCinema.SharedKernel;
 public abstract class AggregateRoot<TId> : Entity<TId>, IAggregateRoot
     where TId : notnull, IEquatable<TId>
 {
-    //future possible TODO: A Version property for optimistic concurrency (whether in separate interface or on IAggregateRoot) 
+    //future possible TODO: A Version property for optimistic concurrency (whether in separate interface or on IAggregateRoot) with InitializeVersion() and IncrementVersion() methods 
     private readonly List<IDomainEvent> _domainEvents = [];
 
     protected AggregateRoot()
