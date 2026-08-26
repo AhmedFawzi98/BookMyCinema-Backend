@@ -1,4 +1,6 @@
-# Result Pattern
+# Error Handling
+
+## Results Pattern
 
 BookMyCinema uses a result-based flow for expected failures and exceptions for unexpected failures, keeping business and validation failures explicit while leaving truly exceptional conditions to the host-level exception pipeline.
 

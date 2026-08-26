@@ -6,14 +6,18 @@ It is intentionally separate from the project `README.md`. The README is focused
 
 ## Topics
 
+### Domain Driven Design (DDD)
+
+- [Overview](ddd/overview.md)
+
 ### Architecture
 
 - [Clean Architecture](architecture/clean-architecture.md)
+- [CQRS](architecture/cqrs.md)
 
 ### Testing
 
 - [Architecture Testing](testing/architecture-testing.md)
-- [Overview](testing/overview.md)
 
 ### Persistence
 

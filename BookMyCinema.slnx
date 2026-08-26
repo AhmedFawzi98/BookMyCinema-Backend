@@ -4,15 +4,18 @@
   </Folder>
   <Folder Name="/docs/architecture/">
     <File Path="docs/architecture/clean-architecture.md" />
+    <File Path="docs/architecture/cqrs.md" />
+  </Folder>
+  <Folder Name="/docs/cross-cutting/">
+    <File Path="docs/cross-cutting/logging.md" />
+    <File Path="docs/cross-cutting/validation.md" />
+    <File Path="docs/error-handling/error-handling.md" />
+  </Folder>
+  <Folder Name="/docs/ddd/">
+    <File Path="docs/ddd/overview.md" />
   </Folder>
   <Folder Name="/docs/development/">
     <File Path="docs/development/tooling.md" />
-  </Folder>
-  <Folder Name="/docs/error-handling/">
-    <File Path="docs/error-handling/results-pattern.md" />
-  </Folder>
-  <Folder Name="/docs/observability/">
-    <File Path="docs/observability/logging.md" />
   </Folder>
   <Folder Name="/docs/persistence/">
     <File Path="docs/persistence/logical-schema.dbml" />

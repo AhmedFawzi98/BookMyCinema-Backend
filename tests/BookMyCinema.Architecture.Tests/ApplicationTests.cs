@@ -4,7 +4,7 @@ using BookMyCinema.Application;
 using BookMyCinema.Application.Common.Abstractions;
 using FluentValidation;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
-using ServiceCollectionExtensions = BookMyCinema.Application.ServiceCollectionExtensions;
+using ServiceCollectionExtensions = BookMyCinema.Domain.ServiceCollectionExtensions;
 
 namespace BookMyCinema.Architecture.Tests;
 
