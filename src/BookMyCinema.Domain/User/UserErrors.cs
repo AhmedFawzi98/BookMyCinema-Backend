@@ -4,7 +4,7 @@ namespace BookMyCinema.Domain.User;
 public static class UserErrors
 {
     public static readonly Error EmailTaken =
-     new("User.Email.Taken", ErrorKind.Conflict, "Email is already in use", "email");
+     new("User.Email.Taken", ErrorKind.Conflict, "Email is already in use");
 
     public static Error NotFound =>
         new("User.NotFound", ErrorKind.NotFound, "User with id: {Id} was not found");

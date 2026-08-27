@@ -5,20 +5,16 @@
   <ItemGroup>
     <!--GENERAL-->
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.10" />
-
     <!--APPLICATION-->
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
-   
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.10" />
+    <PackageVersion Include="Scrutor" Version="7.0.0" />
     <!--Host(WebApp)-->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.10" />
-
-      <!--API-->
+    <!--API-->
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" />
-
-      <!--Persistance-->
+    <!--Persistance-->
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
-
-      
     <!--TESTS-->
     <PackageVersion Include="coverlet.collector" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.10" />

@@ -141,6 +141,10 @@ So keeping Bounded context and aggregate specific artifacts close together
 
 `BookMyCinema.Application` coordinates use cases. It decides how domain rules, validation, repositories, external services, messaging, and other application-facing abstractions are combined to execute a use case.
 
+Application contracts should be named by domain and data shape first, not by technical artifact labels. The convention is to avoid the `Dto` suffix across application DTOs and instead use representative names when possible, so names describe data shape instead of leaking technical concerns.
+
+Commands and queries should use immutable record-based message contracts by default whenever possible. `sealed record` is the general default, and `readonly record struct` may also be used when all fields are value types as a small optimization to avoid heap allocation. Use a `class` only when a record is not suitable for the specific requirement.
+
 ### Feature-first organization
 
 Application layer is feature-first organization, each feature use cases are grouped under the feature, and each use case groups its related artifacts (commands/queries DTOs, results DTOs, validators, validations errors, use case handlers, readers/writers services, etc.).

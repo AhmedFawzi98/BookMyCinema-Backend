@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace BookMyCinema.Application.Features.Tickets.GetTicketById;
 
-internal class GetTicketByIdValidator : AbstractValidator<TicketDto>
+internal class GetTicketByIdValidator : AbstractValidator<TicketDetails>
 {
     public GetTicketByIdValidator()
     {

@@ -2,20 +2,33 @@ using BookMyCinema.Domain.Common.Errors;
 using FluentValidation.Results;
 
 namespace BookMyCinema.Application.Common.Validations;
+
 internal static class ValidationExtensions
 {
+    internal static List<Error> ToErrors(
+      this IReadOnlyList<ValidationResult> results)
+    {
+        return results
+            .SelectMany(result => result.Errors)
+            .Select(ToError)
+            .ToList();
+    }
+
     internal static List<Error> ToErrors(this ValidationResult result)
     {
         return result.Errors
-            .Select(f => new Error(
-                code: f.ErrorCode ?? "Validation.Unknown",
-                type: ErrorKind.Validation,
-                message: f.ErrorMessage,
-                field: string.IsNullOrWhiteSpace(f.PropertyName)
-                    ? null
-                    : ExtractFieldName(f.PropertyName)
-            ))
+            .Select(ToError)
             .ToList();
+    }
+    private static Error ToError(ValidationFailure validationFailure)
+    {
+        return new Error(
+            code: validationFailure.ErrorCode ?? "Validation.Unknown",
+            type: ErrorKind.Validation,
+            message: validationFailure.ErrorMessage,
+            field: string.IsNullOrWhiteSpace(validationFailure.PropertyName)
+                ? null
+                : ExtractFieldName(validationFailure.PropertyName));
     }
 
     //Address.Area -> Area 
@@ -24,13 +37,4 @@ internal static class ValidationExtensions
         int lastDot = propertyName.LastIndexOf('.');
         return lastDot >= 0 ? propertyName[(lastDot + 1)..] : propertyName;
     }
-
-    /*
-        example usage:
-        var validationResult = validator.Validate(request);
-        if (!validationResult.IsValid)
-        {
-            return Result<T>.Failure(validationResult.ToErrors());
-        }
-    */
 }
