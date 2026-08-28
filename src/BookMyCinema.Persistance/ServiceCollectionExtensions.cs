@@ -1,6 +1,11 @@
+using BookMyCinema.Application.Common.Abstractions.Persistence;
+using BookMyCinema.Domain.Ticket;
+using BookMyCinema.Persistance.Common;
 using BookMyCinema.Persistance.Constants;
 using BookMyCinema.Persistance.Interceptors;
 using BookMyCinema.Persistance.Options;
+using BookMyCinema.Persistance.Tickets;
+using BookMyCinema.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,10 +19,11 @@ public static class ServiceCollectionExtensions
     {
         AddPersistenceOptions(services);
         AddEfCore(services, configuration);
+        AddRepositories(services);
+        AddUnitOfWork(services);
 
         return services;
     }
-
 
     private static void AddPersistenceOptions(IServiceCollection services)
     {
@@ -73,4 +79,13 @@ public static class ServiceCollectionExtensions
         });
     }
 
+    private static void AddRepositories(IServiceCollection services)
+    {
+        services.AddScoped<ITicketRepository, TicketRepository>();
+    }
+
+    private static void AddUnitOfWork(IServiceCollection services)
+    {
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+    }
 }
