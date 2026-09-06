@@ -23,6 +23,7 @@ It is intentionally separate from the project `README.md`. The README is focused
 
 - [logical schema dbml](persistence/logical-schema.dbml)
 - [logical schema md](persistence/logical-schema.md)
+- [data access](persistence/data-access.md)
 
 ### Error Handling
 
